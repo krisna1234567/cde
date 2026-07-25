@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
@@ -34,7 +36,9 @@ Route::get('/privacy-policy', [LegalController::class, 'privacy'])->name('privac
 Route::get('/terms-of-use', [LegalController::class, 'terms'])->name('terms');
 
 Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('admin.')->group(function (): void {
-    Route::view('/dashboard', 'admin.dashboard')->name('dashboard');
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/settings', [SiteSettingController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings', [SiteSettingController::class, 'update'])->name('settings.update');
 });
 
 require __DIR__.'/auth.php';

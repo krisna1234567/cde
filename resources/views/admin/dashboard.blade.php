@@ -1,32 +1,80 @@
 @extends('layouts.admin')
 
 @section('title', 'Dashboard')
+@section('page_heading', 'Dashboard')
 
 @section('content')
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-        <div>
-            <h1 class="h3 fw-bold mb-1">Dashboard</h1>
-            <p class="text-secondary mb-0">Fondasi CMS Laravel 10 telah siap.</p>
-        </div>
-        <span class="badge text-bg-success align-self-start align-self-md-center px-3 py-2">Tahap 2 Selesai</span>
+    @php
+        $cards = [
+            ['label' => 'Products', 'value' => $summary['products'], 'icon' => 'bi-box-seam'],
+            ['label' => 'Services', 'value' => $summary['services'], 'icon' => 'bi-tools'],
+            ['label' => 'Projects', 'value' => $summary['portfolios'], 'icon' => 'bi-images'],
+            ['label' => 'Media Posts', 'value' => $summary['posts'], 'icon' => 'bi-newspaper'],
+            ['label' => 'New Messages', 'value' => $summary['new_messages'], 'icon' => 'bi-envelope-exclamation'],
+        ];
+    @endphp
+
+    <div class="admin-summary-grid mb-4">
+        @foreach ($cards as $card)
+            <article class="admin-summary-card">
+                <span class="admin-summary-icon"><i class="bi {{ $card['icon'] }}"></i></span>
+                <div>
+                    <p>{{ $card['label'] }}</p>
+                    <strong>{{ number_format($card['value']) }}</strong>
+                </div>
+            </article>
+        @endforeach
     </div>
 
-    <div class="row g-3">
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body"><span class="text-secondary small">Framework</span><h2 class="h5 mt-2 mb-0">Laravel 10</h2></div></div>
-        </div>
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body"><span class="text-secondary small">Authentication</span><h2 class="h5 mt-2 mb-0">Laravel Breeze</h2></div></div>
-        </div>
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body"><span class="text-secondary small">Frontend</span><h2 class="h5 mt-2 mb-0">Blade + Bootstrap 5</h2></div></div>
-        </div>
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card border-0 shadow-sm h-100"><div class="card-body"><span class="text-secondary small">Asset Bundler</span><h2 class="h5 mt-2 mb-0">Vite</h2></div></div>
-        </div>
-    </div>
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <section class="admin-card h-100">
+                <div class="admin-card-header">
+                    <div>
+                        <h2>Recent Activity</h2>
+                        <p>Perubahan konten terbaru oleh administrator.</p>
+                    </div>
+                </div>
 
-    <div class="alert alert-info mt-4 mb-0">
-        Tahap berikutnya adalah membuat migration, model, relasi, seeder admin, dan middleware role Admin.
+                @forelse ($activities as $activity)
+                    <div class="admin-activity-item">
+                        <span class="admin-activity-dot"></span>
+                        <div class="flex-grow-1">
+                            <div class="d-flex flex-wrap justify-content-between gap-2">
+                                <strong>{{ $activity->description }}</strong>
+                                <time class="text-muted small" datetime="{{ $activity->created_at?->toIso8601String() }}">{{ $activity->created_at?->diffForHumans() }}</time>
+                            </div>
+                            <p class="mb-0">{{ $activity->user?->name ?? 'System' }} · {{ ucfirst($activity->event) }}</p>
+                        </div>
+                    </div>
+                @empty
+                    <div class="admin-empty-state">
+                        <i class="bi bi-clock-history"></i>
+                        <p>Belum ada aktivitas admin.</p>
+                    </div>
+                @endforelse
+            </section>
+        </div>
+
+        <div class="col-xl-4">
+            <section class="admin-card h-100">
+                <div class="admin-card-header">
+                    <div>
+                        <h2>Quick Actions</h2>
+                        <p>Akses pengaturan utama website.</p>
+                    </div>
+                </div>
+                <a href="{{ route('admin.settings.edit') }}" class="admin-quick-link">
+                    <span><i class="bi bi-sliders"></i></span>
+                    <div><strong>Site Settings</strong><small>Brand, kontak, Maps, sosial media, dan SEO.</small></div>
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+                <a href="{{ route('home') }}" target="_blank" rel="noopener" class="admin-quick-link">
+                    <span><i class="bi bi-globe2"></i></span>
+                    <div><strong>Preview Website</strong><small>Buka halaman public di tab baru.</small></div>
+                    <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+            </section>
+        </div>
     </div>
 @endsection
