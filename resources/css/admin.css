@@ -76,6 +76,19 @@
 .admin-save-bar { position: sticky; bottom: 16px; z-index: 1010; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 14px 16px; border: 1px solid var(--admin-border); border-radius: 14px; background: rgba(255,255,255,.96); box-shadow: 0 16px 40px rgba(15,23,42,.13); backdrop-filter: blur(12px); }
 .admin-save-bar p { color: var(--admin-muted); font-size: .76rem; }
 .admin-mobile-sidebar .offcanvas-body { background: #062f49; }
+.admin-table thead th { padding: 12px 14px; border-bottom-width: 1px; color: var(--admin-muted); font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; }
+.admin-table tbody td { padding: 14px; border-color: var(--admin-border); font-size: .84rem; }
+.admin-content-block { padding: 17px; border: 1px solid var(--admin-border); border-radius: 13px; background: #fafcfd; }
+.admin-content-block + .admin-content-block { margin-top: 13px; }
+.admin-content-block-header, .admin-item-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.admin-row-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.admin-row-actions form { margin: 0; }
+.admin-item-list { margin-top: 14px; padding-top: 8px; border-top: 1px solid var(--admin-border); }
+.admin-item-row { padding: 9px 4px; border-bottom: 1px solid var(--admin-border); }
+.admin-item-row:last-child { border-bottom: 0; }
+.admin-item-row strong, .admin-item-row small { display: block; }
+.admin-item-row strong { font-size: .8rem; }
+.admin-item-row small { margin-top: 2px; color: var(--admin-muted); font-size: .7rem; }
 
 @media (max-width: 1199.98px) {
     .admin-summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -95,6 +108,7 @@
     .admin-upload-field { flex-direction: column; }
     .admin-save-bar { align-items: stretch; flex-direction: column; bottom: 8px; }
     .admin-save-bar .btn { width: 100%; }
+    .admin-content-block-header, .admin-item-row { align-items: flex-start; flex-direction: column; }
 }
 
 @media (max-width: 479.98px) {

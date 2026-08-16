@@ -32,7 +32,17 @@ function initAdminCharacterCounters() {
     });
 }
 
+function initAdminDeleteConfirmations() {
+    document.querySelectorAll('form[data-confirm-delete]').forEach((form) => {
+        form.addEventListener('submit', (event) => {
+            const subject = form.dataset.confirmDelete || 'data ini';
+            if (!window.confirm(`Hapus ${subject}? Tindakan ini tidak dapat dibatalkan.`)) event.preventDefault();
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initAdminImagePreviews();
     initAdminCharacterCounters();
+    initAdminDeleteConfirmations();
 });
