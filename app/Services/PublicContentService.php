@@ -265,7 +265,7 @@ class PublicContentService
             'published_time' => $publishedAt?->format('H:i').' WIB',
             'cover_image' => $this->publicPath($post->cover_image_path, 'images/media/news-detail.webp'),
             'cover_image_alt' => $post->cover_image_alt ?: $post->title,
-            'content' => $this->paragraphs($post->content),
+            'content' => $this->postContent($post->content),
         ];
     }
 
@@ -310,6 +310,53 @@ class PublicContentService
     public function plainText(?string $content): string
     {
         return trim(implode(' ', $this->paragraphs($content)));
+    }
+
+    public function postContent(?string $content): array
+    {
+        return collect($this->paragraphHtml($content))
+            ->map(fn (string $paragraph): string => $this->sanitizePostHtml($paragraph))
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function paragraphHtml(?string $content): array
+    {
+        if (blank($content)) {
+            return [];
+        }
+
+        $content = str_replace(["\r\n", "\r"], "\n", (string) $content);
+        preg_match_all('/<p\b[^>]*>(.*?)<\/p>/is', $content, $matches);
+        $parts = $matches[1] ?? [];
+
+        if ($parts === []) {
+            $parts = preg_split('/\n{2,}/', $content) ?: [];
+        }
+
+        return collect($parts)
+            ->map(fn (string $paragraph): string => trim($paragraph))
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    private function sanitizePostHtml(string $html): string
+    {
+        $html = strip_tags($html, '<br><strong><b><em><i><u><a>');
+        $html = preg_replace_callback('/<a\b([^>]*)>/i', function (array $matches): string {
+            preg_match('/href=["\']([^"\']+)["\']/i', $matches[1], $hrefMatch);
+            $href = $hrefMatch[1] ?? '';
+
+            if (! preg_match('/^(https?:\/\/|mailto:|tel:|\/|#)/i', $href)) {
+                return '<a>';
+            }
+
+            return '<a href="'.e($href).'" target="_blank" rel="noopener">';
+        }, $html) ?? $html;
+
+        return trim($html);
     }
 
     public function publicPath(?string $path, ?string $fallback = null): ?string

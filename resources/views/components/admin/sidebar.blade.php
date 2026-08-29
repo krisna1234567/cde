@@ -17,13 +17,23 @@
         <a href="{{ route('admin.settings.edit') }}" class="admin-nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
             <i class="bi bi-sliders"></i><span>Site Settings</span>
         </a>
+        {{-- Hidden until Pages & Sections is ready for admin users.
         <a href="{{ route('admin.pages.index') }}" class="admin-nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
             <i class="bi bi-layout-text-window-reverse"></i><span>Pages & Sections</span>
         </a>
-        <span class="admin-nav-link disabled"><i class="bi bi-box-seam"></i><span>Products & Services</span><small>Soon</small></span>
-        <span class="admin-nav-link disabled"><i class="bi bi-images"></i><span>Projects</span><small>Soon</small></span>
-        <span class="admin-nav-link disabled"><i class="bi bi-newspaper"></i><span>Media</span><small>Soon</small></span>
-        <span class="admin-nav-link disabled"><i class="bi bi-envelope"></i><span>Contact Messages</span><small>Soon</small></span>
+        --}}
+        <a href="{{ route('admin.services.index') }}" class="admin-nav-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
+            <i class="bi bi-box-seam"></i><span>Products & Services</span>
+        </a>
+        <a href="{{ route('admin.projects.index') }}" class="admin-nav-link {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}">
+            <i class="bi bi-images"></i><span>Projects</span>
+        </a>
+        <a href="{{ route('admin.media.index') }}" class="admin-nav-link {{ request()->routeIs('admin.media.*') ? 'active' : '' }}">
+            <i class="bi bi-newspaper"></i><span>Media</span>
+        </a>
+        <a href="{{ route('admin.contact-messages.index') }}" class="admin-nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}">
+            <i class="bi bi-envelope"></i><span>Contact Messages</span>
+        </a>
     </nav>
 
     <div class="admin-sidebar-footer">

@@ -89,6 +89,16 @@
 .admin-item-row strong, .admin-item-row small { display: block; }
 .admin-item-row strong { font-size: .8rem; }
 .admin-item-row small { margin-top: 2px; color: var(--admin-muted); font-size: .7rem; }
+.admin-wysiwyg { overflow: hidden; border: 1px solid #d7dee7; border-radius: 9px; background: #fff; }
+.admin-wysiwyg-toolbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; border-bottom: 1px solid var(--admin-border); background: #f8fafc; }
+.admin-wysiwyg-toolbar button { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: #334155; }
+.admin-wysiwyg-toolbar button:hover, .admin-wysiwyg-toolbar button:focus { border-color: #cbd5e1; background: #fff; color: var(--admin-primary); }
+.admin-wysiwyg-editor { min-height: 260px; padding: 13px 14px; outline: 0; color: var(--admin-text); font-size: .88rem; line-height: 1.65; }
+.admin-wysiwyg-editor:focus { box-shadow: inset 0 0 0 .22rem rgba(7,59,90,.09); }
+.admin-wysiwyg-editor p { margin: 0 0 .85rem; }
+.admin-wysiwyg-editor p:last-child { margin-bottom: 0; }
+.admin-wysiwyg-editor a { color: var(--admin-primary); text-decoration: underline; }
+.admin-wysiwyg-source { display: none; }
 
 @media (max-width: 1199.98px) {
     .admin-summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }

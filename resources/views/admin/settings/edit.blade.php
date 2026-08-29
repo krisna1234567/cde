@@ -18,7 +18,10 @@
 
     <section class="admin-card mb-4">
         <div class="admin-card-header">
-            <div><h2>Brand Identity</h2><p>Nama, tagline, logo, dan favicon perusahaan.</p></div>
+            <div>
+                <h2>Brand Identity</h2>
+                <p>Nama, tagline, logo, dan favicon perusahaan.</p>
+            </div>
             <span class="admin-section-icon"><i class="bi bi-buildings"></i></span>
         </div>
         <div class="row g-4">
@@ -65,10 +68,10 @@
                 <div class="admin-upload-field mt-4">
                     <div class="admin-upload-preview admin-upload-preview-favicon">
                         @if ($media['favicon'])
-                            <img src="{{ $media['favicon'] }}" alt="Current favicon" data-preview-image="faviconPreview">
+                        <img src="{{ $media['favicon'] }}" alt="Current favicon" data-preview-image="faviconPreview">
                         @else
-                            <span data-preview-placeholder="faviconPreview"><i class="bi bi-image"></i></span>
-                            <img src="" alt="Favicon preview" class="d-none" data-preview-image="faviconPreview">
+                        <span data-preview-placeholder="faviconPreview"><i class="bi bi-image"></i></span>
+                        <img src="" alt="Favicon preview" class="d-none" data-preview-image="faviconPreview">
                         @endif
                     </div>
                     <div class="flex-grow-1">
@@ -88,7 +91,10 @@
 
     <section class="admin-card mb-4">
         <div class="admin-card-header">
-            <div><h2>Contact Information</h2><p>Informasi yang ditampilkan pada Contact, footer, dan tombol WhatsApp.</p></div>
+            <div>
+                <h2>Contact Information</h2>
+                <p>Informasi yang ditampilkan pada Contact, footer, dan tombol WhatsApp.</p>
+            </div>
             <span class="admin-section-icon"><i class="bi bi-person-lines-fill"></i></span>
         </div>
         <div class="row g-4">
@@ -129,7 +135,10 @@
 
     <section class="admin-card mb-4">
         <div class="admin-card-header">
-            <div><h2>Google Maps</h2><p>Gunakan URL embed agar peta dapat ditampilkan dengan aman tanpa menyimpan kode iframe.</p></div>
+            <div>
+                <h2>Google Maps</h2>
+                <p>Gunakan URL embed agar peta dapat ditampilkan dengan aman tanpa menyimpan kode iframe.</p>
+            </div>
             <span class="admin-section-icon"><i class="bi bi-geo-alt-fill"></i></span>
         </div>
         <div class="row g-4">
@@ -149,33 +158,39 @@
 
     <section class="admin-card mb-4">
         <div class="admin-card-header">
-            <div><h2>Social Media</h2><p>Kosongkan platform yang tidak ingin ditampilkan pada website.</p></div>
+            <div>
+                <h2>Social Media</h2>
+                <p>Kosongkan platform yang tidak ingin ditampilkan pada website.</p>
+            </div>
             <span class="admin-section-icon"><i class="bi bi-share-fill"></i></span>
         </div>
         @php
-            $socialFields = [
-                'linkedin' => ['LinkedIn', 'bi-linkedin'],
-                'instagram' => ['Instagram', 'bi-instagram'],
-                'facebook' => ['Facebook', 'bi-facebook'],
-                'twitter' => ['X / Twitter', 'bi-twitter-x'],
-                'youtube' => ['YouTube', 'bi-youtube'],
-                'telegram' => ['Telegram', 'bi-telegram'],
-            ];
+        $socialFields = [
+        'linkedin' => ['LinkedIn', 'bi-linkedin'],
+        'instagram' => ['Instagram', 'bi-instagram'],
+        'facebook' => ['Facebook', 'bi-facebook'],
+        'twitter' => ['X / Twitter', 'bi-twitter-x'],
+        'youtube' => ['YouTube', 'bi-youtube'],
+        'telegram' => ['Telegram', 'bi-telegram'],
+        ];
         @endphp
         <div class="row g-4">
             @foreach ($socialFields as $key => [$label, $icon])
-                <div class="col-md-6">
-                    <label for="social_{{ $key }}" class="form-label"><i class="bi {{ $icon }} me-1"></i>{{ $label }}</label>
-                    <input type="url" id="social_{{ $key }}" name="social_links[{{ $key }}]" class="form-control @error('social_links.'.$key) is-invalid @enderror" value="{{ old('social_links.'.$key, data_get($setting->social_links, $key)) }}" placeholder="https://">
-                    <x-admin.field-error :name="'social_links.'.$key" />
-                </div>
+            <div class="col-md-6">
+                <label for="social_{{ $key }}" class="form-label"><i class="bi {{ $icon }} me-1"></i>{{ $label }}</label>
+                <input type="url" id="social_{{ $key }}" name="social_links[{{ $key }}]" class="form-control @error('social_links.'.$key) is-invalid @enderror" value="{{ old('social_links.'.$key, data_get($setting->social_links, $key)) }}" placeholder="https://">
+                <x-admin.field-error :name="'social_links.'.$key" />
+            </div>
             @endforeach
         </div>
     </section>
 
     <section class="admin-card mb-4">
         <div class="admin-card-header">
-            <div><h2>Footer & Default SEO</h2><p>Nilai SEO ini digunakan saat halaman tidak memiliki override sendiri.</p></div>
+            <div>
+                <h2>Footer & Default SEO</h2>
+                <p>Nilai SEO ini digunakan saat halaman tidak memiliki override sendiri.</p>
+            </div>
             <span class="admin-section-icon"><i class="bi bi-search"></i></span>
         </div>
         <div class="row g-4">
@@ -216,7 +231,7 @@
     </section>
 
     <div class="admin-save-bar">
-        <p class="mb-0"><i class="bi bi-info-circle me-2"></i>Pastikan menjalankan <code>php artisan storage:link</code> agar gambar upload dapat diakses.</p>
+        <p class="mb-0"></p>
         <button type="submit" class="btn admin-primary-button"><i class="bi bi-floppy-fill me-2"></i>Save Changes</button>
     </div>
 </form>

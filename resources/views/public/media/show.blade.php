@@ -16,7 +16,7 @@
                 <figure><img src="{{ asset($post['cover_image']) }}" alt="{{ $post['cover_image_alt'] }}" width="1450" height="650"></figure>
                 <div class="media-article-content">
                     @foreach ($post['content'] as $paragraph)
-                        <p>{{ $paragraph }}</p>
+                        <p>{!! $paragraph !!}</p>
                     @endforeach
                 </div>
             </article>
