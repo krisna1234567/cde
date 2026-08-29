@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Models\Portfolio;
+use App\Models\ClientLogo;
 use App\Models\Testimonial;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Schema;
@@ -67,16 +68,23 @@ class HomeController extends PublicController
             'image_alt' => $companySection['image_alt'] ?: 'Rows of rooftop solar panels installed on an industrial facility',
         ];
 
-        $impact = collect($impactSection['items'])->map(fn (array $item): array => [
-            'value' => $item['title'],
-            'label' => $item['subtitle'] ?: $item['description'],
-        ])->all();
+        $impact = $this->content->impactMetrics();
 
-        $clients = collect($clientsSection['items'])->map(fn (array $item): array => [
-            'name' => $item['title'],
-            'logo' => $item['image'],
-            'image_alt' => $item['image_alt'] ?: $item['title'].' logo',
-        ])->all();
+        $clients = Schema::hasTable('client_logos')
+            ? ClientLogo::query()
+                ->active()
+                ->ordered()
+                ->get()
+                ->map(fn (ClientLogo $clientLogo): array => $this->content->clientLogo($clientLogo))
+                ->filter(fn (array $client): bool => filled($client['logo']))
+                ->values()
+                ->all()
+            : collect($clientsSection['items'])->map(fn (array $item): array => [
+                'name' => $item['title'],
+                'logo' => $item['image'],
+                'image_alt' => $item['image_alt'] ?: $item['title'].' logo',
+                'website_url' => $item['link_url'],
+            ])->all();
 
         $benefits = collect($benefitsSection['items'])->map(fn (array $item): array => [
             'icon' => $item['icon'] ?: 'bi-check-circle',

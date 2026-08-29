@@ -33,6 +33,7 @@ class SiteSettingSeeder extends Seeder
             'default_meta_title' => 'CDE - Renewable Energy Solutions',
             'default_meta_description' => 'PT Cipta Daya Engineering delivers solar PV and renewable energy solutions for businesses across Indonesia.',
             'default_og_image_path' => 'images/site/hero.webp',
+            'impact_metrics' => SiteSetting::defaultImpactMetrics(),
         ]);
     }
 }

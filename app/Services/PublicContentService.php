@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Page;
+use App\Models\ClientLogo;
 use App\Models\PageSection;
 use App\Models\PageSectionItem;
 use App\Models\Portfolio;
@@ -201,6 +202,28 @@ class PublicContentService
             'link_text' => $item->link_text,
             'link_url' => $item->link_url,
             'settings' => $item->settings ?? [],
+        ];
+    }
+
+    public function impactMetrics(): array
+    {
+        return collect($this->siteSetting()->impactMetrics())
+            ->filter(fn (array $metric): bool => (bool) ($metric['is_active'] ?? false))
+            ->map(fn (array $metric): array => [
+                'value' => $metric['value'],
+                'label' => $metric['label'],
+            ])
+            ->values()
+            ->all();
+    }
+
+    public function clientLogo(ClientLogo $clientLogo): array
+    {
+        return [
+            'name' => $clientLogo->name,
+            'logo' => $this->publicPath($clientLogo->logo_path),
+            'image_alt' => $clientLogo->logo_alt ?: $clientLogo->name.' logo',
+            'website_url' => $clientLogo->website_url,
         ];
     }
 

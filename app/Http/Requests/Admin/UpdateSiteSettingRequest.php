@@ -13,7 +13,7 @@ class UpdateSiteSettingRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge([
+        $prepared = [
             'company_name' => trim((string) $this->input('company_name')),
             'short_name' => $this->nullableTrim('short_name'),
             'tagline' => $this->nullableTrim('tagline'),
@@ -24,7 +24,13 @@ class UpdateSiteSettingRequest extends FormRequest
             'google_maps_embed_url' => $this->nullableTrim('google_maps_embed_url'),
             'google_maps_link' => $this->nullableTrim('google_maps_link'),
             'default_meta_title' => $this->nullableTrim('default_meta_title'),
-        ]);
+        ];
+
+        if ($this->has('impact_metrics_present')) {
+            $prepared['impact_metrics'] = $this->preparedImpactMetrics();
+        }
+
+        $this->merge($prepared);
     }
 
     public function rules(): array
@@ -58,6 +64,12 @@ class UpdateSiteSettingRequest extends FormRequest
             'default_meta_description' => ['nullable', 'string', 'max:500'],
             'default_og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             'remove_default_og_image' => ['nullable', 'boolean'],
+            'impact_metrics_present' => ['nullable', 'boolean'],
+            'impact_metrics' => ['nullable', 'array', 'max:12'],
+            'impact_metrics.*.value' => ['required', 'string', 'max:50'],
+            'impact_metrics.*.label' => ['required', 'string', 'max:100'],
+            'impact_metrics.*.sort_order' => ['required', 'integer', 'min:0', 'max:65535'],
+            'impact_metrics.*.is_active' => ['required', 'boolean'],
         ];
     }
 
@@ -74,7 +86,26 @@ class UpdateSiteSettingRequest extends FormRequest
             'google_maps_embed_url.url' => 'Google Maps Embed URL harus berupa URL HTTP/HTTPS yang valid.',
             'google_maps_link.url' => 'Google Maps Link harus berupa URL HTTP/HTTPS yang valid.',
             'default_og_image.max' => 'Ukuran default OG image maksimal 3 MB.',
+            'impact_metrics.*.value.required' => 'Angka impact wajib diisi.',
+            'impact_metrics.*.label.required' => 'Label impact wajib diisi.',
         ];
+    }
+
+    private function preparedImpactMetrics(): array
+    {
+        return collect($this->input('impact_metrics', []))
+            ->filter(fn ($metric): bool => is_array($metric))
+            ->map(function (array $metric): array {
+                return [
+                    'value' => trim((string) ($metric['value'] ?? '')),
+                    'label' => trim((string) ($metric['label'] ?? '')),
+                    'sort_order' => $metric['sort_order'] ?? '',
+                    'is_active' => filter_var($metric['is_active'] ?? false, FILTER_VALIDATE_BOOLEAN),
+                ];
+            })
+            ->filter(fn (array $metric): bool => $metric['value'] !== '' || $metric['label'] !== '')
+            ->values()
+            ->all();
     }
 
     private function nullableTrim(string $key): ?string

@@ -145,12 +145,6 @@ class PageSectionSeeder extends Seeder
     private function seedItems(): void
     {
         $items = [
-            'home.impact' => [
-                ['title' => '50+ MW', 'subtitle' => 'Installed Capacity'],
-                ['title' => '120+', 'subtitle' => 'Projects Completed'],
-                ['title' => '30+', 'subtitle' => 'Clients Served'],
-                ['title' => '10+ Years', 'subtitle' => 'Industry Experience'],
-            ],
             'home.benefits' => [
                 ['title' => 'Eco-Friendly Energy', 'description' => 'Generate clean, renewable energy while reducing carbon emissions and environmental impact.', 'icon' => 'bi-leaf-fill'],
                 ['title' => 'Reliable Power Backup', 'description' => 'Ensure a more reliable power supply when grid electricity is interrupted.', 'icon' => 'bi-battery-charging'],
@@ -158,16 +152,6 @@ class PageSectionSeeder extends Seeder
                 ['title' => 'Versatile Solar Technology', 'description' => 'Solar technology supports multiple energy solutions beyond electricity generation.', 'icon' => 'bi-grid-3x3-gap-fill'],
                 ['title' => 'Low Maintenance', 'description' => 'Solar panels require minimal maintenance and offer long-term performance.', 'icon' => 'bi-tools'],
                 ['title' => 'Lower Electricity Costs', 'description' => 'Reduce electricity expenses by generating your own clean energy.', 'icon' => 'bi-lightning-charge-fill'],
-            ],
-            'home.clients' => [
-                ['title' => 'AstraNova', 'image_path' => 'images/clients/astranova.svg'],
-                ['title' => 'SuryaTech', 'image_path' => 'images/clients/suryatech.svg'],
-                ['title' => 'Polaris', 'image_path' => 'images/clients/polaris.svg'],
-                ['title' => 'BumiEnergi', 'image_path' => 'images/clients/bumienergi.svg'],
-                ['title' => 'Kirana', 'image_path' => 'images/clients/kirana.svg'],
-                ['title' => 'Lumen', 'image_path' => 'images/clients/lumen.svg'],
-                ['title' => 'Nusantara', 'image_path' => 'images/clients/nusantara.svg'],
-                ['title' => 'Cleo', 'image_path' => 'images/clients/cleo.svg'],
             ],
             'home.hybrid-system' => [
                 ['title' => 'Solar Panel (PV)', 'description' => 'Generates clean energy from sunlight during the day.', 'icon' => 'bi-sun'],

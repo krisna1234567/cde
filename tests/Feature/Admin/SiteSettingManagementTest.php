@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\SiteSetting;
 use App\Models\User;
+use Database\Seeders\PublicContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -60,6 +61,35 @@ class SiteSettingManagementTest extends TestCase
         $this->assertSame('PT Cipta Daya Engineering', $setting->company_name);
         $this->assertSame('628112257000', $setting->whatsapp_number);
         $this->assertSame(['linkedin' => 'https://www.linkedin.com/company/example'], $setting->social_links);
+    }
+
+    public function test_admin_can_update_home_impact_metrics_from_site_settings(): void
+    {
+        $this->seed(PublicContentSeeder::class);
+        $admin = User::factory()->create(['is_admin' => true, 'is_active' => true]);
+
+        $this->actingAs($admin)->put(route('admin.settings.update'), [
+            'company_name' => 'PT Cipta Daya Engineering',
+            'impact_metrics_present' => '1',
+            'impact_metrics' => [
+                ['value' => '140+', 'label' => 'Projects Completed', 'sort_order' => 1, 'is_active' => '1'],
+                ['value' => '75 MWp', 'label' => 'Installed Capacity', 'sort_order' => 2, 'is_active' => '1'],
+                ['value' => '999+', 'label' => 'Hidden Impact', 'sort_order' => 3, 'is_active' => '0'],
+            ],
+        ])->assertRedirect(route('admin.settings.edit'));
+
+        $setting = SiteSetting::current()->fresh();
+        $this->assertSame('140+', $setting->impact_metrics[0]['value']);
+        $this->assertSame('75 MWp', $setting->impact_metrics[1]['value']);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('140+')
+            ->assertSee('Projects Completed')
+            ->assertSee('75 MWp')
+            ->assertSee('Installed Capacity')
+            ->assertDontSee('999+')
+            ->assertDontSee('Hidden Impact');
     }
 
     public function test_admin_can_replace_logo_and_old_storage_file_is_deleted(): void

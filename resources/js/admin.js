@@ -41,6 +41,51 @@ function initAdminDeleteConfirmations() {
     });
 }
 
+function initAdminImpactMetrics() {
+    const list = document.querySelector('[data-impact-metric-list]');
+    const template = document.querySelector('[data-impact-metric-template]');
+    const addButton = document.querySelector('[data-impact-metric-add]');
+
+    if (!list || !template || !addButton) return;
+
+    let nextIndex = Number(list.dataset.nextIndex || 0);
+    let nextOrder = Number(list.dataset.nextOrder || 1);
+
+    const bindRemove = (row) => {
+        row.querySelector('[data-impact-metric-remove]')?.addEventListener('click', () => {
+            row.remove();
+            if (!list.querySelector('[data-impact-metric-row]')) {
+                const empty = document.createElement('div');
+                empty.className = 'admin-empty-state py-4';
+                empty.dataset.impactMetricEmpty = '';
+                empty.innerHTML = '<i class="bi bi-bar-chart-line"></i><p>Belum ada impact metric.</p>';
+                list.appendChild(empty);
+            }
+        });
+    };
+
+    list.querySelectorAll('[data-impact-metric-row]').forEach(bindRemove);
+
+    addButton.addEventListener('click', () => {
+        list.querySelector('[data-impact-metric-empty]')?.remove();
+
+        const html = template.innerHTML
+            .replaceAll('__INDEX__', String(nextIndex))
+            .replaceAll('__ORDER__', String(nextOrder));
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html.trim();
+        const row = wrapper.firstElementChild;
+
+        if (!row) return;
+
+        list.appendChild(row);
+        bindRemove(row);
+        row.querySelector('input')?.focus();
+        nextIndex += 1;
+        nextOrder += 1;
+    });
+}
+
 function sanitizeEditorHtml(html) {
     const template = document.createElement('template');
     template.innerHTML = html;
@@ -165,5 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initAdminImagePreviews();
     initAdminCharacterCounters();
     initAdminDeleteConfirmations();
+    initAdminImpactMetrics();
     initAdminWysiwygEditors();
 });

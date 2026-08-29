@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ContactMessageController as AdminContactMessageController;
+use App\Http\Controllers\Admin\ClientLogoController as AdminClientLogoController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PageSectionController;
@@ -49,6 +50,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('ad
     Route::put('/settings', [SiteSettingController::class, 'update'])->name('settings.update');
     Route::resource('services', ServiceController::class)->except(['show']);
     Route::resource('projects', AdminProjectController::class)->except(['show']);
+    Route::resource('clients', AdminClientLogoController::class)->except(['show'])->parameters(['clients' => 'clientLogo']);
     Route::resource('testimonials', AdminTestimonialController::class)->except(['show']);
     Route::resource('media', AdminMediaController::class)->except(['show'])->parameters(['media' => 'post']);
     Route::resource('contact-messages', AdminContactMessageController::class)->only(['index', 'show']);

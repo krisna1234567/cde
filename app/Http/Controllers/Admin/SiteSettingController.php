@@ -9,6 +9,7 @@ use App\Services\ImageUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Throwable;
 
@@ -26,8 +27,9 @@ class SiteSettingController extends Controller
             'favicon' => $this->images->url($setting->favicon_path),
             'default_og_image' => $this->images->url($setting->default_og_image_path, 'images/site/hero.webp'),
         ];
+        $impactMetrics = $setting->impactMetrics();
 
-        return view('admin.settings.edit', compact('setting', 'media'));
+        return view('admin.settings.edit', compact('setting', 'media', 'impactMetrics'));
     }
 
     public function update(UpdateSiteSettingRequest $request): RedirectResponse
@@ -39,12 +41,17 @@ class SiteSettingController extends Controller
 
         $data = Arr::except($validated, [
             'logo', 'favicon', 'default_og_image', 'remove_logo', 'remove_favicon', 'remove_default_og_image',
+            'impact_metrics_present',
         ]);
 
         $data['social_links'] = collect($validated['social_links'] ?? [])
             ->map(fn ($value) => filled($value) ? trim((string) $value) : null)
             ->filter()
             ->all();
+
+        if ($request->has('impact_metrics_present') && Schema::hasColumn('site_settings', 'impact_metrics')) {
+            $data['impact_metrics'] = SiteSetting::normalizeImpactMetrics($validated['impact_metrics'] ?? []);
+        }
 
         try {
             $this->prepareImageChange($request, 'logo', 'remove_logo', 'logo_path', 'settings/branding', $setting, $data, $newFiles, $oldFilesToDelete);

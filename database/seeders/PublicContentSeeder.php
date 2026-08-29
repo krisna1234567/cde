@@ -13,6 +13,7 @@ class PublicContentSeeder extends Seeder
             PageSeeder::class,
             PageSectionSeeder::class,
             TestimonialSeeder::class,
+            ClientLogoSeeder::class,
             ServiceSeeder::class,
             PortfolioSeeder::class,
             PostSeeder::class,

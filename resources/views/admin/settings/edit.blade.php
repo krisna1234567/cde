@@ -230,6 +230,101 @@
         </div>
     </section>
 
+    <section class="admin-card mb-4">
+        <div class="admin-card-header">
+            <div>
+                <h2>Our Impact in Numbers</h2>
+                <p>Angka yang tampil pada section Impact di halaman Home.</p>
+            </div>
+            <span class="admin-section-icon"><i class="bi bi-bar-chart-line-fill"></i></span>
+        </div>
+
+        @php
+            $impactMetricRows = collect(old('impact_metrics', $impactMetrics ?? []))->values();
+            $nextImpactOrder = ((int) $impactMetricRows->max('sort_order')) + 1;
+        @endphp
+
+        <input type="hidden" name="impact_metrics_present" value="1">
+
+        <div data-impact-metric-list data-next-index="{{ $impactMetricRows->count() }}" data-next-order="{{ max(1, $nextImpactOrder) }}">
+            @forelse ($impactMetricRows as $index => $metric)
+                <div class="admin-content-block" data-impact-metric-row>
+                    <div class="admin-content-block-header mb-3">
+                        <div>
+                            <strong>Impact Metric #{{ $loop->iteration }}</strong>
+                            <small class="d-block text-muted">{{ $metric['label'] ?? 'Metric' }}</small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-impact-metric-remove><i class="bi bi-trash me-1"></i>Delete</button>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label" for="impact_metric_value_{{ $index }}">Number *</label>
+                            <input id="impact_metric_value_{{ $index }}" name="impact_metrics[{{ $index }}][value]" class="form-control @error('impact_metrics.'.$index.'.value') is-invalid @enderror" value="{{ $metric['value'] ?? '' }}" maxlength="50" placeholder="50+ MW">
+                            <x-admin.field-error :name="'impact_metrics.'.$index.'.value'" />
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label" for="impact_metric_label_{{ $index }}">Label *</label>
+                            <input id="impact_metric_label_{{ $index }}" name="impact_metrics[{{ $index }}][label]" class="form-control @error('impact_metrics.'.$index.'.label') is-invalid @enderror" value="{{ $metric['label'] ?? '' }}" maxlength="100" placeholder="Installed Capacity">
+                            <x-admin.field-error :name="'impact_metrics.'.$index.'.label'" />
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label" for="impact_metric_order_{{ $index }}">Order *</label>
+                            <input id="impact_metric_order_{{ $index }}" type="number" min="0" name="impact_metrics[{{ $index }}][sort_order]" class="form-control @error('impact_metrics.'.$index.'.sort_order') is-invalid @enderror" value="{{ $metric['sort_order'] ?? ($index + 1) }}">
+                            <x-admin.field-error :name="'impact_metrics.'.$index.'.sort_order'" />
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <div class="form-check form-switch mb-2">
+                                <input type="hidden" name="impact_metrics[{{ $index }}][is_active]" value="0">
+                                <input id="impact_metric_active_{{ $index }}" class="form-check-input" type="checkbox" name="impact_metrics[{{ $index }}][is_active]" value="1" @checked((bool) ($metric['is_active'] ?? true))>
+                                <label class="form-check-label" for="impact_metric_active_{{ $index }}">Active</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="admin-empty-state py-4" data-impact-metric-empty>
+                    <i class="bi bi-bar-chart-line"></i>
+                    <p>Belum ada impact metric.</p>
+                </div>
+            @endforelse
+        </div>
+
+        <template data-impact-metric-template>
+            <div class="admin-content-block" data-impact-metric-row>
+                <div class="admin-content-block-header mb-3">
+                    <div>
+                        <strong>New Impact Metric</strong>
+                        <small class="d-block text-muted">Metric baru</small>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-impact-metric-remove><i class="bi bi-trash me-1"></i>Delete</button>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label" for="impact_metric_value___INDEX__">Number *</label>
+                        <input id="impact_metric_value___INDEX__" name="impact_metrics[__INDEX__][value]" class="form-control" value="" maxlength="50" placeholder="50+ MW">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label" for="impact_metric_label___INDEX__">Label *</label>
+                        <input id="impact_metric_label___INDEX__" name="impact_metrics[__INDEX__][label]" class="form-control" value="" maxlength="100" placeholder="Installed Capacity">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label" for="impact_metric_order___INDEX__">Order *</label>
+                        <input id="impact_metric_order___INDEX__" type="number" min="0" name="impact_metrics[__INDEX__][sort_order]" class="form-control" value="__ORDER__">
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <div class="form-check form-switch mb-2">
+                            <input type="hidden" name="impact_metrics[__INDEX__][is_active]" value="0">
+                            <input id="impact_metric_active___INDEX__" class="form-check-input" type="checkbox" name="impact_metrics[__INDEX__][is_active]" value="1" checked>
+                            <label class="form-check-label" for="impact_metric_active___INDEX__">Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <button type="button" class="btn btn-outline-primary mt-3" data-impact-metric-add><i class="bi bi-plus-lg me-1"></i>Add Metric</button>
+    </section>
+
     <div class="admin-save-bar">
         <p class="mb-0"></p>
         <button type="submit" class="btn admin-primary-button"><i class="bi bi-floppy-fill me-2"></i>Save Changes</button>
