@@ -175,14 +175,6 @@ class PageSectionSeeder extends Seeder
                 ['title' => 'Grid Connection', 'description' => 'Supplies additional power when needed and supports energy stability.', 'icon' => 'bi-diagram-3'],
                 ['title' => 'Home / Building', 'description' => 'Uses energy from solar, battery, or grid seamlessly.', 'icon' => 'bi-house-door'],
             ],
-            'home.testimonials' => [
-                ['title' => 'Emily Jeff', 'subtitle' => 'CEO, TheWebAgency', 'description' => 'The team delivered a reliable solar solution with clear communication from planning through commissioning.', 'settings' => ['rating' => 5, 'initials' => 'EJ']],
-                ['title' => 'Hamza Malik', 'subtitle' => 'Manager, TheWebTech', 'description' => 'Our operational cost is more predictable and the installation process was handled professionally.', 'settings' => ['rating' => 5, 'initials' => 'HM']],
-                ['title' => 'Elizabeth Rai', 'subtitle' => 'Developer, Leo Company', 'description' => 'We value the technical detail, responsive support, and measurable energy performance.', 'settings' => ['rating' => 5, 'initials' => 'ER']],
-                ['title' => 'Sara Thomas', 'subtitle' => 'Accountant, TheConstruction', 'description' => 'The project was completed safely, on schedule, and with transparent reporting.', 'settings' => ['rating' => 5, 'initials' => 'ST']],
-                ['title' => 'David Lim', 'subtitle' => 'Operations Director', 'description' => 'A dependable partner for industrial-scale renewable energy implementation.', 'settings' => ['rating' => 5, 'initials' => 'DL']],
-                ['title' => 'Nadia Putri', 'subtitle' => 'Sustainability Lead', 'description' => 'CDE helped us translate our sustainability targets into a practical energy roadmap.', 'settings' => ['rating' => 5, 'initials' => 'NP']],
-            ],
             'about.vision-mission' => [
                 ['title' => 'Vision', 'description' => 'Become a key player in accelerating sustainable growth and development.'],
                 ['title' => 'Mission', 'description' => 'Energizing the transformation of society and industry to achieve a more productive, sustainable future.'],

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PageSectionItemController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SiteSettingController;
+use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\HomeController;
@@ -48,6 +49,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('ad
     Route::put('/settings', [SiteSettingController::class, 'update'])->name('settings.update');
     Route::resource('services', ServiceController::class)->except(['show']);
     Route::resource('projects', AdminProjectController::class)->except(['show']);
+    Route::resource('testimonials', AdminTestimonialController::class)->except(['show']);
     Route::resource('media', AdminMediaController::class)->except(['show'])->parameters(['media' => 'post']);
     Route::resource('contact-messages', AdminContactMessageController::class)->only(['index', 'show']);
 

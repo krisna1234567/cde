@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Models\Portfolio;
+use App\Models\Testimonial;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class HomeController extends PublicController
@@ -103,13 +105,20 @@ class HomeController extends PublicController
             ->map(fn (Portfolio $portfolio) => $this->content->portfolio($portfolio))
             ->all();
 
-        $testimonials = collect($testimonialsSection['items'])->map(fn (array $item): array => [
-            'name' => $item['title'],
-            'role' => $item['subtitle'],
-            'initials' => data_get($item, 'settings.initials', Str::of((string) $item['title'])->explode(' ')->map(fn ($word) => Str::substr($word, 0, 1))->take(2)->implode('')),
-            'rating' => (int) data_get($item, 'settings.rating', 5),
-            'quote' => $item['description'],
-        ])->all();
+        $testimonials = Schema::hasTable('testimonials')
+            ? Testimonial::query()
+                ->active()
+                ->ordered()
+                ->get()
+                ->map(fn (Testimonial $testimonial): array => $this->content->testimonial($testimonial))
+                ->all()
+            : collect($testimonialsSection['items'])->map(fn (array $item): array => [
+                'name' => $item['title'],
+                'role' => $item['subtitle'],
+                'initials' => data_get($item, 'settings.initials', Str::of((string) $item['title'])->explode(' ')->map(fn ($word) => Str::substr($word, 0, 1))->take(2)->implode('')),
+                'rating' => (int) data_get($item, 'settings.rating', 5),
+                'quote' => $item['description'],
+            ])->all();
 
         $contactCta = [
             'enabled' => $contactCtaSection['enabled'],

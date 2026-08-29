@@ -9,6 +9,7 @@ use App\Models\Portfolio;
 use App\Models\Post;
 use App\Models\Service;
 use App\Models\SiteSetting;
+use App\Models\Testimonial;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -226,6 +227,17 @@ class PublicContentService
             'slug' => $service->slug,
             'icon' => $service->icon ?: 'bi-check-circle',
             'description' => $service->short_description ?: $this->plainText($service->description),
+        ];
+    }
+
+    public function testimonial(Testimonial $testimonial): array
+    {
+        return [
+            'name' => $testimonial->name,
+            'role' => $testimonial->role,
+            'initials' => $testimonial->displayInitials(),
+            'rating' => max(1, min(5, (int) $testimonial->rating)),
+            'quote' => $testimonial->quote,
         ];
     }
 

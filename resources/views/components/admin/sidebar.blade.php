@@ -28,6 +28,9 @@
         <a href="{{ route('admin.projects.index') }}" class="admin-nav-link {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}">
             <i class="bi bi-images"></i><span>Projects</span>
         </a>
+        <a href="{{ route('admin.testimonials.index') }}" class="admin-nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
+            <i class="bi bi-chat-quote"></i><span>Testimonials</span>
+        </a>
         <a href="{{ route('admin.media.index') }}" class="admin-nav-link {{ request()->routeIs('admin.media.*') ? 'active' : '' }}">
             <i class="bi bi-newspaper"></i><span>Media</span>
         </a>

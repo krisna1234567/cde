@@ -138,7 +138,7 @@
         </section>
     @endif
 
-    @if ($testimonialsSection['enabled'])
+    @if ($testimonialsSection['enabled'] && count($testimonials) > 0)
         <section class="testimonials-section">
             <div class="container-xl">
                 <div class="section-heading text-center">
