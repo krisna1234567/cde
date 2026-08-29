@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Models\TeamMember;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Schema;
 
 class AboutController extends PublicController
 {
@@ -20,14 +22,20 @@ class AboutController extends PublicController
         $vision = collect($visionMissionSection['items'])->first(fn (array $item) => strcasecmp((string) $item['title'], 'Vision') === 0);
         $mission = collect($visionMissionSection['items'])->first(fn (array $item) => strcasecmp((string) $item['title'], 'Mission') === 0);
 
-        $teams = collect($teamSection['items'])->map(fn (array $item): array => [
-            'name' => $item['title'],
-            'position' => $item['subtitle'],
-            'description' => $item['description'],
-            'image' => $item['image'] ?: 'images/team/bonnie-green.svg',
-            'image_alt' => $item['image_alt'] ?: 'Portrait of '.$item['title'],
-            'socials' => data_get($item, 'settings.socials', []),
-        ])->all();
+        $teams = Schema::hasTable('team_members')
+            ? TeamMember::query()
+                ->active()
+                ->ordered()
+                ->get()
+                ->map(fn (TeamMember $teamMember): array => $this->content->teamMember($teamMember))
+                ->all()
+            : collect($teamSection['items'])->map(fn (array $item): array => [
+                'name' => $item['title'],
+                'position' => $item['subtitle'],
+                'description' => $item['description'],
+                'image' => $item['image'] ?: 'images/team/bonnie-green.svg',
+                'image_alt' => $item['image_alt'] ?: 'Portrait of '.$item['title'],
+            ])->all();
 
         return $this->renderPage('public.about', $page, [
             'hero' => [

@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\Page;
 use App\Models\ClientLogo;
+use App\Models\Page;
 use App\Models\PageSection;
 use App\Models\PageSectionItem;
 use App\Models\Portfolio;
 use App\Models\Post;
 use App\Models\Service;
 use App\Models\SiteSetting;
+use App\Models\TeamMember;
 use App\Models\Testimonial;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -224,6 +225,17 @@ class PublicContentService
             'logo' => $this->publicPath($clientLogo->logo_path),
             'image_alt' => $clientLogo->logo_alt ?: $clientLogo->name.' logo',
             'website_url' => $clientLogo->website_url,
+        ];
+    }
+
+    public function teamMember(TeamMember $teamMember): array
+    {
+        return [
+            'name' => $teamMember->name,
+            'position' => $teamMember->position,
+            'description' => $teamMember->description,
+            'image' => $this->publicPath($teamMember->photo_path, 'images/team/bonnie-green.svg'),
+            'image_alt' => 'Portrait of '.$teamMember->name,
         ];
     }
 

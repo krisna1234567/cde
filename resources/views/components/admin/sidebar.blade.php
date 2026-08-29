@@ -17,7 +17,7 @@
         <a href="{{ route('admin.settings.edit') }}" class="admin-nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
             <i class="bi bi-sliders"></i><span>Site Settings</span>
         </a>
-        {{-- Hidden until Pages & Sections is ready for admin users.
+        {{-- Hidden from sidebar; available via direct admin/pages route when needed.
         <a href="{{ route('admin.pages.index') }}" class="admin-nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
             <i class="bi bi-layout-text-window-reverse"></i><span>Pages & Sections</span>
         </a>
@@ -30,6 +30,9 @@
         </a>
         <a href="{{ route('admin.clients.index') }}" class="admin-nav-link {{ request()->routeIs('admin.clients.*') ? 'active' : '' }}">
             <i class="bi bi-building-check"></i><span>Clients</span>
+        </a>
+        <a href="{{ route('admin.teams.index') }}" class="admin-nav-link {{ request()->routeIs('admin.teams.*') ? 'active' : '' }}">
+            <i class="bi bi-people"></i><span>Teams</span>
         </a>
         <a href="{{ route('admin.testimonials.index') }}" class="admin-nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
             <i class="bi bi-chat-quote"></i><span>Testimonials</span>

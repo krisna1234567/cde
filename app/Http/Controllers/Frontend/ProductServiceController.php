@@ -42,9 +42,39 @@ class ProductServiceController extends PublicController
             'products' => $products,
             'servicesSection' => $servicesSection,
             'services' => $services,
+            'servicesSummary' => [
+                'count' => count($services),
+                'scope' => 'End-to-End',
+                'scope_label' => 'Consultation to maintenance',
+            ],
         ], [
             'image' => $this->content->assetUrl($heroSection['image'], 'images/pages/product-hero.webp'),
             'canonical' => route('products.index'),
+        ]);
+    }
+
+    public function services(): View
+    {
+        $page = $this->content->page('product-services');
+        $sections = $this->content->sections($page);
+        $servicesSection = $this->content->sectionData($this->content->section($sections, 'services'));
+
+        $services = Service::query()
+            ->services()
+            ->active()
+            ->orderBy('sort_order')
+            ->get()
+            ->map(fn (Service $service) => $this->content->service($service))
+            ->all();
+
+        return $this->renderPage('public.products.services', $page, [
+            'servicesSection' => $servicesSection,
+            'services' => $services,
+        ], [
+            'title' => 'Our Service - '.$this->content->site()['short_name'],
+            'description' => $servicesSection['subtitle'] ?: 'Explore CDE services across consultation, engineering, procurement, construction, commissioning, and maintenance.',
+            'image' => $this->content->assetUrl($servicesSection['image'], 'images/pages/service-engineer.webp'),
+            'canonical' => route('products.services'),
         ]);
     }
 

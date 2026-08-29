@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\PageSectionItemController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SiteSettingController;
+use App\Http\Controllers\Admin\TeamMemberController as AdminTeamMemberController;
 use App\Http\Controllers\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\ContactController;
@@ -26,6 +27,7 @@ Route::get('/about', AboutController::class)->name('about');
 
 Route::prefix('product-services')->name('products.')->group(function (): void {
     Route::get('/', [ProductServiceController::class, 'index'])->name('index');
+    Route::get('/services', [ProductServiceController::class, 'services'])->name('services');
     Route::get('/{slug}', [ProductServiceController::class, 'show'])->name('show');
 });
 
@@ -51,6 +53,7 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('ad
     Route::resource('services', ServiceController::class)->except(['show']);
     Route::resource('projects', AdminProjectController::class)->except(['show']);
     Route::resource('clients', AdminClientLogoController::class)->except(['show'])->parameters(['clients' => 'clientLogo']);
+    Route::resource('teams', AdminTeamMemberController::class)->except(['show'])->parameters(['teams' => 'teamMember']);
     Route::resource('testimonials', AdminTestimonialController::class)->except(['show']);
     Route::resource('media', AdminMediaController::class)->except(['show'])->parameters(['media' => 'post']);
     Route::resource('contact-messages', AdminContactMessageController::class)->only(['index', 'show']);

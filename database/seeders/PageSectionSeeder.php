@@ -168,12 +168,6 @@ class PageSectionSeeder extends Seeder
                 ['title' => 'Reliable Energy Solutions', 'subtitle' => '02', 'description' => 'Solutions are designed around each client’s operational requirements, site conditions, and performance targets.'],
                 ['title' => 'High Quality Standards', 'subtitle' => '03', 'description' => 'A disciplined approach to engineering, procurement, safety, testing, and project handover.'],
             ],
-            'about.team' => [
-                ['title' => 'Bonnie Green', 'subtitle' => 'Senior Front-end Developer', 'description' => 'Supports digital product development and user experience across internal and client-facing platforms.', 'image_path' => 'images/team/bonnie-green.svg', 'settings' => ['socials' => ['facebook' => '#', 'twitter' => '#', 'github' => '#']]],
-                ['title' => 'Thomas Lean', 'subtitle' => 'Engineering Manager', 'description' => 'Coordinates multidisciplinary engineering activities and ensures solutions meet technical requirements.', 'image_path' => 'images/team/thomas-lean.svg', 'settings' => ['socials' => ['facebook' => '#', 'twitter' => '#', 'github' => '#']]],
-                ['title' => 'Jese Leos', 'subtitle' => 'Project Engineer', 'description' => 'Works with project teams from site assessment and design through construction and commissioning.', 'image_path' => 'images/team/jese-leos.svg', 'settings' => ['socials' => ['facebook' => '#', 'twitter' => '#', 'github' => '#']]],
-                ['title' => 'Leslie Livingston', 'subtitle' => 'Business Development', 'description' => 'Helps clients explore practical renewable energy solutions aligned with operational and sustainability goals.', 'image_path' => 'images/team/leslie-livingston.svg', 'settings' => ['socials' => ['facebook' => '#', 'twitter' => '#', 'github' => '#']]],
-            ],
         ];
 
         foreach ($items as $target => $sectionItems) {

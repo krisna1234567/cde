@@ -23,15 +23,26 @@
         <section class="services-overview-section">
             <div class="container-xl">
                 <div class="services-overview-grid">
-                    <div class="services-image-wrap"><img src="{{ asset($servicesSection['image']) }}" alt="{{ $servicesSection['image_alt'] }}" loading="lazy" width="760" height="920"></div>
+                    <figure class="services-image-wrap">
+                        <img src="{{ asset($servicesSection['image']) }}" alt="{{ $servicesSection['image_alt'] }}" loading="lazy" width="760" height="500">
+                    </figure>
                     <div class="services-content">
                         <h2>{{ $servicesSection['title'] }}</h2>
                         <p class="services-lead">{{ $servicesSection['subtitle'] }}</p>
-                        <div class="services-list-grid">
-                            @foreach ($services as $service)
-                                <article class="service-item"><span><i class="bi {{ $service['icon'] }}"></i></span><h3>{{ $service['title'] }}</h3><p>{{ $service['description'] }}</p></article>
-                            @endforeach
+                        <div class="services-overview-stats" aria-label="Service summary">
+                            <article>
+                                <strong>{{ number_format($servicesSummary['count']) }}</strong>
+                                <span>Core Services</span>
+                            </article>
+                            <article>
+                                <strong>{{ $servicesSummary['scope'] }}</strong>
+                                <span>{{ $servicesSummary['scope_label'] }}</span>
+                            </article>
                         </div>
+                        <a class="services-overview-button" href="{{ route('products.services') }}">
+                            <span>View All Services</span>
+                            <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </div>
             </div>

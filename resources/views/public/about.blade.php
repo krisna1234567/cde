@@ -35,8 +35,8 @@
         </section>
     @endif
 
-    @if ($teamSection['enabled'])
-        <section class="team-section">
+    @if ($teamSection['enabled'] && count($teams) > 0)
+        <section id="meetTeams" class="team-section">
             <div class="container-xl">
                 <h2>{{ $teamSection['title'] }}</h2>
                 <div class="team-grid">
@@ -47,14 +47,6 @@
                                 <h3>{{ $member['name'] }}</h3>
                                 <span>{{ $member['position'] }}</span>
                                 <p>{{ $member['description'] }}</p>
-                                @if (!empty($member['socials']))
-                                    <div class="team-socials" aria-label="Social links for {{ $member['name'] }}">
-                                        @foreach ($member['socials'] as $social => $url)
-                                            @php($icon = match ($social) { 'facebook' => 'bi-facebook', 'twitter' => 'bi-twitter-x', 'instagram' => 'bi-instagram', 'linkedin' => 'bi-linkedin', 'github' => 'bi-github', default => 'bi-link-45deg' })
-                                            <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($social) }}"><i class="bi {{ $icon }}"></i></a>
-                                        @endforeach
-                                    </div>
-                                @endif
                             </div>
                         </article>
                     @endforeach
