@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Throwable;
@@ -83,9 +84,11 @@ class ServiceController extends Controller
     {
         $data = $this->data($request);
         $newFiles = [];
+        $newProposal = null;
 
         try {
             $this->prepareNewFile($request, 'image', 'image_path', 'services/images', $data, $newFiles);
+            $newProposal = $this->storeProposal($request, $data);
 
             $service = DB::transaction(function () use ($data): Service {
                 $service = Service::query()->create($data);
@@ -94,6 +97,9 @@ class ServiceController extends Controller
                 return $service;
             });
         } catch (Throwable $exception) {
+            if ($newProposal) {
+                Storage::disk('local')->delete($newProposal);
+            }
             foreach ($newFiles as $path) {
                 $this->images->delete($path);
             }
@@ -121,9 +127,15 @@ class ServiceController extends Controller
         $newFiles = [];
         $oldFilesToDelete = [];
         $oldOgImagePath = $service->og_image_path;
+        $oldProposal = $service->proposal_path;
+        $newProposal = null;
 
         try {
             $this->prepareFileChange($request, 'image', 'remove_image', 'image_path', 'services/images', $service, $data, $newFiles, $oldFilesToDelete);
+            $newProposal = $this->storeProposal($request, $data);
+            if (! $newProposal && ($request->boolean('remove_proposal') || $request->input('item_type') !== ServiceType::Service->value)) {
+                $data['proposal_path'] = null;
+            }
 
             DB::transaction(function () use ($service, $data): void {
                 $service->update($data);
@@ -131,6 +143,9 @@ class ServiceController extends Controller
                 $this->syncAutomaticSeo($service);
             });
         } catch (Throwable $exception) {
+            if ($newProposal) {
+                Storage::disk('local')->delete($newProposal);
+            }
             foreach ($newFiles as $path) {
                 $this->images->delete($path);
             }
@@ -140,6 +155,9 @@ class ServiceController extends Controller
 
         if (filled($oldOgImagePath) && $oldOgImagePath !== $service->og_image_path) {
             $oldFilesToDelete[] = $oldOgImagePath;
+        }
+        if ($oldProposal && $oldProposal !== $service->proposal_path) {
+            Storage::disk('local')->delete($oldProposal);
         }
 
         foreach (array_unique($oldFilesToDelete) as $path) {
@@ -158,7 +176,31 @@ class ServiceController extends Controller
 
     private function data(StoreServiceRequest $request): array
     {
-        return Arr::except($request->validated(), ['image', 'remove_image']);
+        return Arr::except($request->validated(), ['image', 'remove_image', 'proposal', 'remove_proposal']);
+    }
+
+    private function storeProposal(StoreServiceRequest $request, array &$data): ?string
+    {
+        if (! $request->hasFile('proposal')) {
+            return null;
+        }
+        $path = $request->file('proposal')->store('services/proposals', 'local');
+        if (! $path) {
+            throw new \RuntimeException('Proposal PDF gagal disimpan.');
+        }
+        $data['proposal_path'] = $path;
+
+        return $path;
+    }
+
+    public function proposal(Service $service): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        abort_unless($service->item_type === ServiceType::Service && $service->hasProposal(), 404);
+
+        return Storage::disk('local')->response($service->proposal_path, $service->slug.'.pdf', [
+            'Content-Type' => 'application/pdf', 'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'private, no-store',
+        ], 'inline');
     }
 
     private function syncAutomaticSeo(Service $service): void

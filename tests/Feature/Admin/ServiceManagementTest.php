@@ -85,7 +85,7 @@ class ServiceManagementTest extends TestCase
         $this->assertSame(route('products.show', $service->slug), $service->canonical_url);
         $this->assertNull($service->og_image_path);
 
-        $this->get(route('products.index'))
+        $this->get(route('products.catalog'))
             ->assertOk()
             ->assertSee('Dynamic Solar Inverter');
 
@@ -121,7 +121,7 @@ class ServiceManagementTest extends TestCase
         $this->assertSame('Updated maintenance service copy.', $service->meta_description);
         $this->assertSame(route('products.index'), $service->canonical_url);
 
-        $this->get(route('products.index'))
+        $this->get(route('products.services'))
             ->assertOk()
             ->assertSee('Lifecycle Maintenance')
             ->assertSee('Updated maintenance service copy.');
@@ -171,11 +171,33 @@ class ServiceManagementTest extends TestCase
         $this->get(route('products.show', $service->slug))->assertNotFound();
     }
 
+    public function test_product_category_is_required_and_must_be_supported(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true, 'is_active' => true]);
+        foreach ([null, 'Invalid Category'] as $category) {
+            $this->actingAs($admin)->post(route('admin.services.store'), $this->serviceData([
+                'product_category' => $category,
+            ]))->assertSessionHasErrors('product_category');
+        }
+        $this->assertDatabaseMissing('services', ['slug' => 'managed-product']);
+    }
+
+    public function test_admin_can_update_product_category(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true, 'is_active' => true]);
+        $product = Service::query()->create($this->serviceData());
+        $this->actingAs($admin)->put(route('admin.services.update', $product), $this->serviceData([
+            'product_category' => 'Solar Module',
+        ]))->assertSessionHasNoErrors()->assertRedirect(route('admin.services.edit', $product));
+        $this->assertSame('Solar Module', $product->fresh()->product_category);
+    }
+
     private function serviceData(array $overrides = []): array
     {
         return array_merge([
             'item_type' => ServiceType::Product->value,
             'name' => 'Managed Product',
+            'product_category' => 'Inverter',
             'slug' => 'managed-product',
             'brand' => 'CDE',
             'price' => null,

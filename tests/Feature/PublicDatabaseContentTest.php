@@ -123,9 +123,27 @@ class PublicDatabaseContentTest extends TestCase
     {
         $this->get(route('products.index'))
             ->assertOk()
-            ->assertSee('View All Services')
+            ->assertSee('Explore Services')
             ->assertSee(route('products.services'), false)
-            ->assertSee('Core Services');
+            ->assertSee(route('products.catalog'), false)
+            ->assertSee('Explore Products');
+    }
+
+    public function test_catalog_combines_search_and_category_and_hides_inactive_products(): void
+    {
+        $base = ['item_type' => 'product', 'product_category' => 'Solar Module', 'brand' => 'Filter Brand', 'is_active' => true];
+        Service::query()->create(array_merge($base, ['name' => 'Matching Solar Panel', 'slug' => 'matching-solar-panel']));
+        Service::query()->create(array_merge($base, ['name' => 'Hidden Solar Panel', 'slug' => 'hidden-solar-panel', 'is_active' => false]));
+        Service::query()->create(array_merge($base, ['name' => 'Wrong Category Panel', 'slug' => 'wrong-category-panel', 'product_category' => 'Battery']));
+
+        $this->get(route('products.catalog', ['q' => 'Filter Brand', 'category' => 'Solar Module']))
+            ->assertOk()
+            ->assertSee('Matching Solar Panel')
+            ->assertDontSee('Hidden Solar Panel')
+            ->assertDontSee('Wrong Category Panel');
+
+        $this->get(route('products.catalog', ['q' => 'nonexistent product']))
+            ->assertOk()->assertSee('No products found');
     }
 
     public function test_services_page_reads_active_services_from_database(): void

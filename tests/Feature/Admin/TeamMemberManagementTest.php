@@ -173,6 +173,74 @@ class TeamMemberManagementTest extends TestCase
             ->assertDontSee('Deleted team member description.');
     }
 
+    public function test_admin_can_manage_ceo_message_and_member_social_links(): void
+    {
+        $this->seed(PublicContentSeeder::class);
+        $admin = User::factory()->create(['is_admin' => true, 'is_active' => true]);
+        $members = TeamMember::query()->ordered()->take(2)->get();
+        $ceo = $members[0];
+        $member = $members[1];
+
+        $this->actingAs($admin)->put(route('admin.teams.update', $ceo), $this->teamMemberData([
+            'name' => 'Company CEO',
+            'is_ceo' => '1',
+            'message_title' => 'A Message from Our CEO',
+            'message' => "Building a cleaner future.\n\nWorking together for Indonesia.",
+        ]))->assertSessionHasNoErrors()->assertRedirect(route('admin.teams.edit', $ceo));
+
+        $this->actingAs($admin)->put(route('admin.teams.update', $member), $this->teamMemberData([
+            'name' => 'Social Team Member',
+            'social_links' => ['linkedin' => 'https://www.linkedin.com/in/team-member'],
+        ]))->assertSessionHasNoErrors()->assertRedirect(route('admin.teams.edit', $member));
+
+        $this->assertDatabaseHas('team_members', ['id' => $ceo->id, 'is_ceo' => true]);
+        $this->assertSame('https://www.linkedin.com/in/team-member', $member->fresh()->social_links['linkedin']);
+
+        $this->get(route('about'))->assertOk()
+            ->assertSeeInOrder(['Company CEO', 'A Message from Our CEO', 'Building a cleaner future.', 'Working together for Indonesia.', 'Social Team Member'])
+            ->assertViewHas('ceo', fn (array $profile): bool => $profile['name'] === 'Company CEO')
+            ->assertViewHas('teams', fn (array $teams): bool => ! in_array('Company CEO', array_column($teams, 'name'), true))
+            ->assertSee('https://www.linkedin.com/in/team-member');
+
+        $ceo->update(['is_active' => false]);
+        $this->get(route('about'))->assertOk()->assertDontSee('A Message from Our CEO');
+    }
+
+    public function test_ceo_requires_message_and_only_one_ceo_can_be_selected(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true, 'is_active' => true]);
+        $ceo = TeamMember::query()->create($this->teamMemberData([
+            'is_ceo' => true,
+            'message' => 'Existing CEO message.',
+            'photo_path' => 'images/team/bonnie-green.svg',
+        ]));
+        $member = TeamMember::query()->create($this->teamMemberData([
+            'name' => 'Another Member',
+            'photo_path' => 'images/team/thomas-lean.svg',
+        ]));
+
+        $this->actingAs($admin)->put(route('admin.teams.update', $member), $this->teamMemberData([
+            'is_ceo' => '1',
+        ]))->assertSessionHasErrors(['is_ceo', 'message']);
+
+        $this->actingAs($admin)->put(route('admin.teams.update', $ceo), $this->teamMemberData([
+            'is_ceo' => '1',
+            'message' => 'Updated CEO message.',
+        ]))->assertSessionHasNoErrors();
+    }
+
+    public function test_member_social_links_reject_unsafe_urls(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true, 'is_active' => true]);
+        $member = TeamMember::query()->create($this->teamMemberData([
+            'photo_path' => 'images/team/bonnie-green.svg',
+        ]));
+
+        $this->actingAs($admin)->put(route('admin.teams.update', $member), $this->teamMemberData([
+            'social_links' => ['linkedin' => 'javascript:alert(1)'],
+        ]))->assertSessionHasErrors('social_links.linkedin');
+    }
+
     private function teamMemberData(array $overrides = []): array
     {
         return array_merge([

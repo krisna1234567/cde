@@ -27,7 +27,11 @@ Route::get('/about', AboutController::class)->name('about');
 
 Route::prefix('product-services')->name('products.')->group(function (): void {
     Route::get('/', [ProductServiceController::class, 'index'])->name('index');
+    Route::get('/products', [ProductServiceController::class, 'catalog'])->name('catalog');
     Route::get('/services', [ProductServiceController::class, 'services'])->name('services');
+    Route::get('/services/{slug}/proposal', [ProductServiceController::class, 'proposal'])->name('proposal');
+    Route::get('/{slug}/contact-sales', [ContactController::class, 'sales'])->name('sales');
+    Route::post('/{slug}/contact-sales', [ContactController::class, 'storeSales'])->middleware('throttle:5,10')->name('sales.store');
     Route::get('/{slug}', [ProductServiceController::class, 'show'])->name('show');
 });
 
@@ -51,6 +55,9 @@ Route::middleware(['auth', EnsureUserIsAdmin::class])->prefix('admin')->name('ad
     Route::get('/settings', [SiteSettingController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [SiteSettingController::class, 'update'])->name('settings.update');
     Route::resource('services', ServiceController::class)->except(['show']);
+    Route::get('services/{service}/proposal', [ServiceController::class, 'proposal'])->name('services.proposal');
+    Route::resource('product-categories', \App\Http\Controllers\Admin\ProductCategoryController::class)
+        ->except(['show'])->parameters(['product-categories' => 'productCategory']);
     Route::resource('projects', AdminProjectController::class)->except(['show']);
     Route::resource('clients', AdminClientLogoController::class)->except(['show'])->parameters(['clients' => 'clientLogo']);
     Route::resource('teams', AdminTeamMemberController::class)->except(['show'])->parameters(['teams' => 'teamMember']);

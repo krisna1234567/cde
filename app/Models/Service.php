@@ -17,7 +17,7 @@ class Service extends Model
     protected $fillable = [
         'item_type', 'name', 'slug', 'brand', 'price', 'currency', 'short_description', 'description', 'icon',
         'image_path', 'image_alt', 'sort_order', 'is_featured', 'is_active', 'meta_title', 'meta_description',
-        'og_image_path', 'canonical_url',
+        'og_image_path', 'canonical_url', 'product_category', 'proposal_path',
     ];
 
     protected $casts = [
@@ -30,6 +30,12 @@ class Service extends Model
     protected function slugSource(): string
     {
         return 'name';
+    }
+
+    public function hasProposal(): bool
+    {
+        return filled($this->proposal_path)
+            && \Illuminate\Support\Facades\Storage::disk('local')->exists($this->proposal_path);
     }
 
     public function scopeActive(Builder $query): Builder

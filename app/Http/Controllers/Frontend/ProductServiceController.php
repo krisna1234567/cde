@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Models\Service;
+use App\Models\ProductCategory;
+use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
 
 class ProductServiceController extends PublicController
@@ -12,24 +14,7 @@ class ProductServiceController extends PublicController
         $page = $this->content->page('product-services');
         $sections = $this->content->sections($page);
         $heroSection = $this->content->sectionData($this->content->section($sections, 'hero'));
-        $productsSection = $this->content->sectionData($this->content->section($sections, 'products'));
-        $servicesSection = $this->content->sectionData($this->content->section($sections, 'services'));
-
-        $products = Service::query()
-            ->products()
-            ->active()
-            ->orderBy('sort_order')
-            ->get()
-            ->map(fn (Service $product) => $this->content->product($product))
-            ->all();
-
-        $services = Service::query()
-            ->services()
-            ->active()
-            ->orderBy('sort_order')
-            ->get()
-            ->map(fn (Service $service) => $this->content->service($service))
-            ->all();
+        $solutionsSection = $this->content->sectionData($this->content->section($sections, 'solutions'));
 
         return $this->renderPage('public.products.index', $page, [
             'hero' => [
@@ -38,18 +23,43 @@ class ProductServiceController extends PublicController
                 'image' => $heroSection['image'] ?: 'images/pages/product-hero.webp',
                 'image_alt' => $heroSection['image_alt'] ?: 'Solar panels under a cloudy sky',
             ],
-            'productsSection' => $productsSection,
-            'products' => $products,
-            'servicesSection' => $servicesSection,
-            'services' => $services,
-            'servicesSummary' => [
-                'count' => count($services),
-                'scope' => 'End-to-End',
-                'scope_label' => 'Consultation to maintenance',
-            ],
+            'solutionsSection' => $solutionsSection,
         ], [
             'image' => $this->content->assetUrl($heroSection['image'], 'images/pages/product-hero.webp'),
             'canonical' => route('products.index'),
+        ]);
+    }
+
+    public function catalog(Request $request): View
+    {
+        $filters = $request->validate([
+            'q' => ['nullable', 'string', 'max:150'],
+            'category' => ['nullable', 'string', 'max:80', \Illuminate\Validation\Rule::exists('product_categories', 'name')],
+        ]);
+        $search = trim($filters['q'] ?? '');
+        $category = $filters['category'] ?? '';
+        $page = $this->content->page('product-services');
+        $products = Service::query()->products()->active()
+            ->when($category !== '', fn ($query) => $query->where('product_category', $category))
+            ->when($search !== '', function ($query) use ($search): void {
+                $query->where(function ($query) use ($search): void {
+                    $query->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('brand', 'like', '%'.$search.'%')
+                        ->orWhere('short_description', 'like', '%'.$search.'%');
+                });
+            })
+            ->orderBy('sort_order')->orderBy('name')->paginate(16)->withQueryString();
+        $products->through(fn (Service $product) => $this->content->product($product));
+
+        return $this->renderPage('public.products.catalog', $page, [
+            'products' => $products,
+            'categories' => ProductCategory::query()->orderBy('name')->get(),
+            'search' => $search,
+            'category' => $category,
+        ], [
+            'title' => 'Our Solar Products - '.$this->content->site()['short_name'],
+            'description' => 'Discover reliable solar products for your solar energy system.',
+            'canonical' => route('products.catalog'),
         ]);
     }
 
@@ -94,4 +104,16 @@ class ProductServiceController extends PublicController
             'type' => 'product',
         ]);
     }
+
+    public function proposal(string $slug): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $service = Service::query()->services()->active()->where('slug', $slug)->firstOrFail();
+        abort_unless($service->hasProposal(), 404);
+
+        return \Illuminate\Support\Facades\Storage::disk('local')->response($service->proposal_path, $service->slug.'.pdf', [
+            'Content-Type' => 'application/pdf', 'X-Content-Type-Options' => 'nosniff',
+            'Cache-Control' => 'private, no-store',
+        ], 'inline');
+    }
+
 }

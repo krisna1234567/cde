@@ -23,11 +23,27 @@
         <div class="footer-divider"></div>
 
         <div class="footer-bottom">
-            <div class="footer-legal">
-                <a href="{{ route('privacy') }}">Privacy Policy</a>
-                <a href="{{ route('terms') }}">Terms of Use</a>
+            <div class="footer-contact">
+                @if (filled($site['address']))
+                    <div class="footer-contact-item footer-address" title="{{ $site['address'] }}" style="flex: 0 1 300px; width: 100%; max-width: 300px; min-width: 0; text-align: left;">
+                        <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                        <span style="display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; white-space: normal; overflow-wrap: anywhere; min-width: 0; line-height: 1.5;">{{ $site['address'] }}</span>
+                    </div>
+                @endif
+                @if (filled($site['phone']))
+                    <a class="footer-contact-item" href="tel:{{ preg_replace('/[^0-9+]/', '', $site['phone']) }}">
+                        <i class="bi bi-telephone" aria-hidden="true"></i>
+                        <span>{{ $site['phone'] }}</span>
+                    </a>
+                @endif
+                @if (filled($site['email']))
+                    <a class="footer-contact-item" href="mailto:{{ $site['email'] }}">
+                        <i class="bi bi-envelope" aria-hidden="true"></i>
+                        <span>{{ $site['email'] }}</span>
+                    </a>
+                @endif
+                <p class="mb-0 footer-copyright" style="margin-left: auto; flex-shrink: 0; white-space: nowrap; text-align: right;">© {{ date('Y') }} {{ $site['copyright'] }}</p>
             </div>
-            <p class="mb-0">© {{ date('Y') }} {{ $site['copyright'] }}</p>
         </div>
     </div>
 </footer>

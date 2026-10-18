@@ -25,7 +25,7 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="form-label">Type *</label>
-                    <select name="item_type" class="form-select" required>
+                    <select name="item_type" class="form-select" required data-item-type>
                         @foreach ($types as $type)
                             <option value="{{ $type->value }}" @selected($currentType === $type->value)>{{ ucfirst($type->value) }}</option>
                         @endforeach
@@ -43,6 +43,18 @@
                 <div class="col-md-6">
                     <label class="form-label">Brand</label>
                     <input name="brand" class="form-control" value="{{ old('brand', $service->brand) }}" placeholder="Huawei">
+                </div>
+                <div class="col-md-6" data-product-category-field @if($currentType !== 'product') hidden @endif>
+                    <label class="form-label" for="product_category">Product Category *</label>
+                    <select id="product_category" name="product_category" class="form-select" @required($currentType === 'product')>
+                        <option value="">Pilih kategori produk</option>
+                        @foreach (App\Models\ProductCategory::query()->orderBy('name')->get() as $category)
+                            <option value="{{ $category->name }}" @selected(old('product_category', $service->product_category) === $category->name)>{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                    <x-admin.field-error name="product_category" />
+                    <div class="form-text">Kategori ini digunakan sebagai filter pada katalog produk publik.</div>
+                    <a href="{{ route('admin.product-categories.index') }}" class="small">Kelola kategori produk</a>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Price</label>
@@ -105,6 +117,20 @@
                         <label for="remove_image" class="form-check-label">Remove current image</label>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="admin-card mb-4" data-service-proposal-field @if($currentType !== 'service') hidden @endif>
+            <div class="admin-card-header"><div><h2>Service Proposal (PDF)</h2><p>Proposal ini ditampilkan saat pengunjung mengeklik kartu layanan. PDF maksimal 10 MB.</p></div></div>
+            @if($service->hasProposal())
+                <a href="{{ route('admin.services.proposal', $service) }}" class="btn btn-outline-secondary mb-3" target="_blank" rel="noopener"><i class="bi bi-file-earmark-pdf me-1"></i>View Current Proposal</a>
+            @endif
+            <label for="proposal" class="form-label">Upload Proposal</label>
+            <input id="proposal" type="file" name="proposal" accept="application/pdf,.pdf" class="form-control">
+            <x-admin.field-error name="proposal" />
+            <div class="form-check mt-3">
+                <input id="remove_proposal" type="checkbox" class="form-check-input" name="remove_proposal" value="1" @checked(old('remove_proposal'))>
+                <label for="remove_proposal" class="form-check-label">Remove current proposal</label>
             </div>
         </div>
 

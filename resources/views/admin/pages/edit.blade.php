@@ -40,6 +40,9 @@
 </form>
 
 <div class="admin-card">
+    @if($page->page_key === 'product-services')
+        <div class="alert alert-info">Dua kartu pada halaman Product &amp; Service dikelola di section <strong>Solar Products &amp; Services</strong> (key: <code>solutions</code>). Klik Edit pada item kartu untuk mengubah Title, Description, Image, dan Link Text. Edit section untuk mengubah judul dan deskripsi di atas kartu.</div>
+    @endif
     <div class="admin-card-header"><div><h2>Page Sections</h2><p>Urutan ini digunakan pada halaman publik.</p></div><a href="{{ route('admin.pages.sections.create', $page) }}" class="btn admin-primary-button"><i class="bi bi-plus-lg me-1"></i>Add Section</a></div>
     <div class="admin-section-list">
         @forelse($page->sections as $section)

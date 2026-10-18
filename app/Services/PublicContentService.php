@@ -236,6 +236,22 @@ class PublicContentService
             'description' => $teamMember->description,
             'image' => $this->publicPath($teamMember->photo_path, 'images/team/bonnie-green.svg'),
             'image_alt' => 'Portrait of '.$teamMember->name,
+            'is_ceo' => $teamMember->is_ceo,
+            'message_title' => $teamMember->message_title ?: 'CEO Message',
+            'message' => $this->paragraphs($teamMember->message),
+            'socials' => collect(TeamMember::SOCIAL_PLATFORMS)
+                ->map(function (array $definition, string $key) use ($teamMember): ?array {
+                    $url = data_get($teamMember->social_links, $key);
+
+                    if (! is_string($url) || ! preg_match('/^https?:\/\//i', $url)) {
+                        return null;
+                    }
+
+                    return array_merge($definition, ['url' => $url]);
+                })
+                ->filter()
+                ->values()
+                ->all(),
         ];
     }
 
@@ -262,6 +278,7 @@ class PublicContentService
             'slug' => $service->slug,
             'icon' => $service->icon ?: 'bi-check-circle',
             'description' => $service->short_description ?: $this->plainText($service->description),
+            'proposal_url' => $service->hasProposal() ? route('products.proposal', $service->slug) : null,
         ];
     }
 

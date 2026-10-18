@@ -25,6 +25,9 @@
         <a href="{{ route('admin.services.index') }}" class="admin-nav-link {{ request()->routeIs('admin.services.*') ? 'active' : '' }}">
             <i class="bi bi-box-seam"></i><span>Products & Services</span>
         </a>
+        <a href="{{ route('admin.product-categories.index') }}" class="admin-nav-link {{ request()->routeIs('admin.product-categories.*') ? 'active' : '' }}">
+            <i class="bi bi-tags"></i><span>Product Categories</span>
+        </a>
         <a href="{{ route('admin.projects.index') }}" class="admin-nav-link {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}">
             <i class="bi bi-images"></i><span>Projects</span>
         </a>

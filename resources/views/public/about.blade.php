@@ -35,10 +35,28 @@
         </section>
     @endif
 
-    @if ($teamSection['enabled'] && count($teams) > 0)
+    @if ($teamSection['enabled'] && ($ceo || count($teams) > 0))
         <section id="meetTeams" class="team-section">
             <div class="container-xl">
                 <h2>{{ $teamSection['title'] }}</h2>
+                @if ($ceo)
+                    <div class="team-ceo">
+                        <figure class="team-ceo-profile">
+                            <img src="{{ asset($ceo['image']) }}" alt="{{ $ceo['image_alt'] }}" loading="lazy" width="420" height="520">
+                            <figcaption>
+                                <h3>{{ $ceo['name'] }}</h3>
+                                <span>{{ $ceo['position'] }}</span>
+                            </figcaption>
+                        </figure>
+                        <div class="team-ceo-message">
+                            <h3>{{ $ceo['message_title'] }}</h3>
+                            @foreach ($ceo['message'] as $paragraph)
+                                <p>{{ $paragraph }}</p>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+                @if (count($teams) > 0)
                 <div class="team-grid">
                     @foreach ($teams as $member)
                         <article class="team-card">
@@ -47,10 +65,18 @@
                                 <h3>{{ $member['name'] }}</h3>
                                 <span>{{ $member['position'] }}</span>
                                 <p>{{ $member['description'] }}</p>
+                                @if (! empty($member['socials']))
+                                    <div class="team-socials" aria-label="{{ $member['name'] }} social media">
+                                        @foreach ($member['socials'] as $social)
+                                            <a href="{{ $social['url'] }}" target="_blank" rel="noopener noreferrer" aria-label="{{ $member['name'] }} — {{ $social['label'] }}"><i class="bi {{ $social['icon'] }}" aria-hidden="true"></i></a>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
                         </article>
                     @endforeach
                 </div>
+                @endif
             </div>
         </section>
     @endif
