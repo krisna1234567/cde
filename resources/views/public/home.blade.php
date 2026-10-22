@@ -53,7 +53,7 @@
 @endif
 
 @if ($company['enabled'])
-<section class="company-section">
+<section class="solar-calculator-section">
     <div class="container-xl">
         <div class="company-heading-grid">
             <h2 class="section-title mb-0">{{ $company['title'] }}</h2>
@@ -63,14 +63,7 @@
             <img src="{{ asset($company['image']) }}" alt="{{ $company['image_alt'] }}" loading="lazy" width="1488" height="453">
         </div>
 
-        @if ($impactSection['enabled'] && count($impact) > 0)
-        <p class="impact-kicker">{{ $impactSection['title'] }}</p>
-        <div class="impact-card">
-            @foreach ($impact as $item)
-            <div class="impact-item"><strong>{{ $item['value'] }}</strong><span>{{ $item['label'] }}</span></div>
-            @endforeach
-        </div>
-        @endif
+
 
     </div>
 </section>
@@ -123,7 +116,7 @@
 @endif
 
 @if ($hybrid['enabled'])
-<section class="hybrid-section">
+<section class="solar-calculator-section">
     <div class="container-xl">
         <div class="hybrid-grid">
             <div class="hybrid-diagram"><img src="{{ asset($hybrid['image']) }}" alt="{{ $hybrid['image_alt'] }}" loading="lazy" width="650" height="442"></div>
@@ -145,7 +138,7 @@
 @endif
 
 @if ($projectsSection['enabled'])
-<section class="projects-section">
+<section class="solar-calculator-section">
     <div class="container-xl">
         <div class="section-heading text-center">
             <h2>{{ $projectsSection['title'] }}</h2>
@@ -157,6 +150,15 @@
             @endforeach
         </div>
         <div class="text-center"><a class="btn btn-see-more" href="{{ route('projects.index') }}">See more</a></div>
+
+        @if ($impactSection['enabled'] && count($impact) > 0)
+        <p class="impact-kicker">{{ $impactSection['title'] }}</p>
+        <div class="impact-card">
+            @foreach ($impact as $item)
+            <div class="impact-item"><strong>{{ $item['value'] }}</strong><span>{{ $item['label'] }}</span></div>
+            @endforeach
+        </div>
+        @endif
     </div>
 </section>
 @endif

@@ -115,6 +115,55 @@ function initTestimonialSlider() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const proposalModal = document.getElementById('serviceProposalModal');
+    if (proposalModal) {
+        const viewer = proposalModal.querySelector('[data-proposal-viewer]');
+        const empty = proposalModal.querySelector('[data-proposal-empty]');
+        const openLink = proposalModal.querySelector('[data-proposal-open]');
+        proposalModal.addEventListener('show.bs.modal', (event) => {
+            const trigger = event.relatedTarget;
+            const title = trigger?.dataset.serviceTitle || 'Service';
+            const url = trigger?.dataset.proposalUrl || '';
+            proposalModal.querySelector('.modal-title').textContent = `${title} — Proposal`;
+            viewer.replaceChildren();
+            empty.hidden = Boolean(url);
+            openLink.hidden = !url;
+            openLink.href = url || '#';
+            if (url) {
+                const frame = document.createElement('iframe');
+                frame.title = `Proposal for ${title}`;
+                frame.src = url;
+                frame.className = 'service-proposal-frame';
+                viewer.appendChild(frame);
+            }
+        });
+        proposalModal.addEventListener('hidden.bs.modal', () => {
+            viewer.replaceChildren();
+            openLink.removeAttribute('href');
+            openLink.hidden = true;
+        });
+    }
+    const itemType = document.querySelector('[data-item-type]');
+    const proposalField = document.querySelector('[data-service-proposal-field]');
+    if (itemType && proposalField) {
+        const updateProposalField = () => {
+            const isService = itemType.value === 'service';
+            proposalField.hidden = !isService;
+            proposalField.querySelectorAll('input').forEach((input) => { input.disabled = !isService; });
+        };
+        itemType.addEventListener('change', updateProposalField);
+        updateProposalField();
+    }
+    const categoryField = document.querySelector('[data-product-category-field]');
+    if (itemType && categoryField) {
+        const updateCategoryField = () => {
+            const isProduct = itemType.value === 'product';
+            categoryField.hidden = !isProduct;
+            categoryField.querySelector('select').required = isProduct;
+        };
+        itemType.addEventListener('change', updateCategoryField);
+        updateCategoryField();
+    }
     initPublicNavbar();
     initSolarCalculator();
     initTestimonialSlider();

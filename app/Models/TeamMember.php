@@ -16,11 +16,22 @@ class TeamMember extends Model
 
     protected $fillable = [
         'name', 'position', 'description', 'photo_path', 'sort_order', 'is_active',
+        'is_ceo', 'message_title', 'message', 'social_links',
     ];
 
     protected $casts = [
         'sort_order' => 'integer',
         'is_active' => 'boolean',
+        'is_ceo' => 'boolean',
+        'social_links' => 'array',
+    ];
+
+    public const SOCIAL_PLATFORMS = [
+        'facebook' => ['label' => 'Facebook', 'icon' => 'bi-facebook'],
+        'twitter' => ['label' => 'Twitter / X', 'icon' => 'bi-twitter-x'],
+        'instagram' => ['label' => 'Instagram', 'icon' => 'bi-instagram'],
+        'linkedin' => ['label' => 'LinkedIn', 'icon' => 'bi-linkedin'],
+        'github' => ['label' => 'GitHub', 'icon' => 'bi-github'],
     ];
 
     public function scopeActive(Builder $query): Builder

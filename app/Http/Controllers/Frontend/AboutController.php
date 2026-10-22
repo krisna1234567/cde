@@ -37,6 +37,9 @@ class AboutController extends PublicController
                 'image_alt' => $item['image_alt'] ?: 'Portrait of '.$item['title'],
             ])->all();
 
+        $ceo = collect($teams)->first(fn (array $member): bool => (bool) ($member['is_ceo'] ?? false));
+        $teams = collect($teams)->reject(fn (array $member): bool => (bool) ($member['is_ceo'] ?? false))->values()->all();
+
         return $this->renderPage('public.about', $page, [
             'hero' => [
                 'title' => $heroSection['title'] ?: $page->title,
@@ -63,6 +66,7 @@ class AboutController extends PublicController
             ])->all(),
             'teamSection' => $teamSection,
             'teams' => $teams,
+            'ceo' => $ceo,
         ], [
             'image' => $this->content->assetUrl($heroSection['image'], 'images/pages/about-hero.webp'),
             'canonical' => route('about'),

@@ -26,6 +26,7 @@ class ServiceSeeder extends Seeder
                 'item_type' => ServiceType::Product->value,
                 'name' => $name,
                 'brand' => $brand,
+                'product_category' => str_starts_with($name, 'LUNA') ? 'Battery' : 'Inverter On Grid',
                 'price' => $price,
                 'currency' => 'USD',
                 'short_description' => 'Reliable solar inverter product for commercial and industrial energy systems.',

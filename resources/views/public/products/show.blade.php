@@ -5,6 +5,7 @@
         <div class="container-xl">
             <x-public.breadcrumb :items="[
                 ['label' => 'Product & Service', 'url' => route('products.index')],
+                ['label' => 'Our Solar Products', 'url' => route('products.catalog')],
                 ['label' => 'Product Details', 'url' => null],
             ]" />
 
@@ -26,6 +27,9 @@
                     @foreach ($product['description'] as $paragraph)
                         <p>{{ $paragraph }}</p>
                     @endforeach
+                    <a class="product-contact-sales" href="{{ route('products.sales', $product['slug']) }}">
+                        Contact Sales <i class="bi bi-telephone" aria-hidden="true"></i>
+                    </a>
                 </article>
             </div>
         </div>

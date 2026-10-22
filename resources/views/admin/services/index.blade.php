@@ -71,6 +71,9 @@
                         <td>
                             <strong>{{ $service->name }}</strong>
                             <small class="d-block text-muted">/{{ $service->slug }}</small>
+                            @if ($service->item_type === App\Enums\ServiceType::Product)
+                                <small class="d-block text-muted">{{ $service->product_category ?: 'Other' }}</small>
+                            @endif
                         </td>
                         <td><span class="badge text-bg-light">{{ ucfirst($service->item_type->value) }}</span></td>
                         <td>

@@ -16,6 +16,7 @@ class PublicContentSeeder extends Seeder
             ClientLogoSeeder::class,
             TeamMemberSeeder::class,
             ServiceSeeder::class,
+            ProductServiceCardsSeeder::class,
             PortfolioSeeder::class,
             PostSeeder::class,
         ]);

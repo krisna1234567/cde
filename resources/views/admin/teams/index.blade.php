@@ -61,6 +61,7 @@
                     <tr>
                         <td>
                             <strong>{{ $member->name }}</strong>
+                            @if ($member->is_ceo)<span class="badge text-bg-primary ms-1">CEO</span>@endif
                             <small class="d-block text-muted">{{ $member->position ?: '-' }}</small>
                         </td>
                         <td>

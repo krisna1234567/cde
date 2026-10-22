@@ -28,7 +28,7 @@ class StorePageSectionRequest extends FormRequest
             'title' => ['nullable', 'string', 'max:255'],
             'subtitle' => ['nullable', 'string', 'max:255'],
             'content' => ['nullable', 'string'],
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:4096'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg,gif', 'max:4096'],
             'remove_image' => ['nullable', 'boolean'],
             'image_alt' => ['nullable', 'string', 'max:255'],
             'button_text' => ['nullable', 'string', 'max:255'],

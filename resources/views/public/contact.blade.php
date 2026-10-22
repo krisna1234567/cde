@@ -20,18 +20,7 @@
                     </address>
                 </div>
 
-                <form class="contact-form" action="{{ route('contact.store') }}" method="POST" novalidate>
-                    @csrf
-                    <div class="honeypot" aria-hidden="true"><label for="website">Website</label><input id="website" type="text" name="website" value="" tabindex="-1" autocomplete="off"></div>
-                    <div class="contact-name-grid">
-                        <div><label for="first_name">First name</label><input id="first_name" class="form-control @error('first_name') is-invalid @enderror" type="text" name="first_name" value="{{ old('first_name') }}" placeholder="First name" required>@error('first_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                        <div><label for="last_name">Last name</label><input id="last_name" class="form-control @error('last_name') is-invalid @enderror" type="text" name="last_name" value="{{ old('last_name') }}" placeholder="Last name" required>@error('last_name')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                    </div>
-                    <div><label for="email">Email</label><input id="email" class="form-control @error('email') is-invalid @enderror" type="email" name="email" value="{{ old('email') }}" placeholder="you@company.com" required>@error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                    <div><label for="phone">Phone number</label><div class="input-group"><span class="input-group-text">ID +62</span><input id="phone" class="form-control @error('phone') is-invalid @enderror" type="tel" name="phone" value="{{ old('phone') }}" placeholder="811 0000 0000">@error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror</div></div>
-                    <div><label for="message">Message</label><textarea id="message" class="form-control @error('message') is-invalid @enderror" name="message" rows="5" placeholder="Leave us a message..." required>{{ old('message') }}</textarea>@error('message')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
-                    <button class="btn contact-submit" type="submit">Send Message</button>
-                </form>
+                @include('public.partials.contact-form', ['formAction' => route('contact.store')])
             </div>
         </div>
     </section>
