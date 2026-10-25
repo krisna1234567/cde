@@ -144,6 +144,16 @@
             <h2>{{ $projectsSection['title'] }}</h2>
             @if ($projectsSection['subtitle'])<p>{{ $projectsSection['subtitle'] }}</p>@endif
         </div>
+
+        @if ($impactSection['enabled'] && count($impact) > 0)
+        <!-- <p class="impact-kicker">{{ $impactSection['title'] }}</p> -->
+        <div class="impact-card mb-4">
+            @foreach ($impact as $item)
+            <div class="impact-item"><strong>{{ $item['value'] }}</strong><span>{{ $item['label'] }}</span></div>
+            @endforeach
+        </div>
+        @endif
+
         <div class="projects-grid">
             @foreach ($projects as $project)
             <x-public.project-card :project="$project" />
@@ -151,14 +161,7 @@
         </div>
         <div class="text-center"><a class="btn btn-see-more" href="{{ route('projects.index') }}">See more</a></div>
 
-        @if ($impactSection['enabled'] && count($impact) > 0)
-        <p class="impact-kicker">{{ $impactSection['title'] }}</p>
-        <div class="impact-card">
-            @foreach ($impact as $item)
-            <div class="impact-item"><strong>{{ $item['value'] }}</strong><span>{{ $item['label'] }}</span></div>
-            @endforeach
-        </div>
-        @endif
+
     </div>
 </section>
 @endif
