@@ -40,13 +40,15 @@
                     <input name="slug" class="form-control" value="{{ old('slug', $service->slug) }}" placeholder="auto-generated-from-name">
                     <div class="form-text">Kosongkan untuk membuat slug otomatis dari nama.</div>
                 </div>
-                <div class="col-md-6">
+
+                {{-- Product-specific fields --}}
+                <div class="col-md-6" data-product-field @if($currentType !== 'product') hidden @endif>
                     <label class="form-label">Brand</label>
-                    <input name="brand" class="form-control" value="{{ old('brand', $service->brand) }}" placeholder="Huawei">
+                    <input name="brand" class="form-control" value="{{ old('brand', $service->brand) }}" placeholder="Huawei" @if($currentType !== 'product') disabled @endif>
                 </div>
-                <div class="col-md-6" data-product-category-field @if($currentType !== 'product') hidden @endif>
+                <div class="col-md-6" data-product-field @if($currentType !== 'product') hidden @endif>
                     <label class="form-label" for="product_category">Product Category *</label>
-                    <select id="product_category" name="product_category" class="form-select" @required($currentType === 'product')>
+                    <select id="product_category" name="product_category" class="form-select" @if($currentType !== 'product') disabled @endif>
                         <option value="">Pilih kategori produk</option>
                         @foreach (App\Models\ProductCategory::query()->orderBy('name')->get() as $category)
                             <option value="{{ $category->name }}" @selected(old('product_category', $service->product_category) === $category->name)>{{ $category->name }}</option>
@@ -56,19 +58,22 @@
                     <div class="form-text">Kategori ini digunakan sebagai filter pada katalog produk publik.</div>
                     <a href="{{ route('admin.product-categories.index') }}" class="small">Kelola kategori produk</a>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3" data-product-field @if($currentType !== 'product') hidden @endif>
                     <label class="form-label">Price</label>
-                    <input type="number" step="0.01" min="0" name="price" class="form-control" value="{{ old('price', $service->price) }}">
+                    <input type="number" step="0.01" min="0" name="price" class="form-control" value="{{ old('price', $service->price) }}" @if($currentType !== 'product') disabled @endif>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3" data-product-field @if($currentType !== 'product') hidden @endif>
                     <label class="form-label">Currency *</label>
-                    <input name="currency" maxlength="3" class="form-control text-uppercase" value="{{ old('currency', $service->currency ?: 'IDR') }}" required>
+                    <input name="currency" maxlength="3" class="form-control text-uppercase" value="{{ old('currency', $service->currency ?: 'IDR') }}" @if($currentType !== 'product') disabled @endif>
                 </div>
-                <div class="col-md-4">
+
+                {{-- Service-specific fields --}}
+                <div class="col-md-6" data-service-field @if($currentType !== 'service') hidden @endif>
                     <label class="form-label">Icon Class</label>
-                    <input name="icon" class="form-control" value="{{ old('icon', $service->icon) }}" placeholder="bi-tools">
-                    <div class="form-text">Dipakai untuk tipe service. Contoh: <code>bi-tools</code>.</div>
+                    <input name="icon" class="form-control" value="{{ old('icon', $service->icon) }}" placeholder="bi-tools" @if($currentType !== 'service') disabled @endif>
+                    <div class="form-text">Ikon kartu layanan di frontend. Contoh: <code>bi-tools</code>, <code>bi-gear</code>, <code>bi-lightning-charge</code>.</div>
                 </div>
+
                 <div class="col-md-4">
                     <label class="form-label">Sort Order *</label>
                     <input type="number" min="0" name="sort_order" class="form-control" value="{{ old('sort_order', $service->sort_order) }}" required>
@@ -99,7 +104,7 @@
             </div>
         </div>
 
-        <div class="admin-card mb-4">
+        <div class="admin-card mb-4" data-product-field @if($currentType !== 'product') hidden @endif>
             <div class="admin-card-header"><div><h2>Main Image</h2><p>Dipakai pada kartu dan detail product jika tersedia.</p></div></div>
             <div class="admin-upload-field">
                 <div class="admin-upload-preview admin-upload-preview-og">
@@ -110,28 +115,66 @@
                     @endif
                 </div>
                 <div class="flex-grow-1">
-                    <input type="file" name="image" accept="image/*" class="form-control" data-image-input data-preview-target="service-image" data-remove-target="remove_image">
-                    <input name="image_alt" class="form-control mt-2" value="{{ old('image_alt', $service->image_alt) }}" placeholder="Image alternative text">
+                    <input type="file" name="image" accept="image/*" class="form-control" data-image-input data-preview-target="service-image" data-remove-target="remove_image" @if($currentType !== 'product') disabled @endif>
+                    <input name="image_alt" class="form-control mt-2" value="{{ old('image_alt', $service->image_alt) }}" placeholder="Image alternative text" @if($currentType !== 'product') disabled @endif>
                     <div class="form-check mt-2">
-                        <input id="remove_image" type="checkbox" class="form-check-input" name="remove_image" value="1">
+                        <input id="remove_image" type="checkbox" class="form-check-input" name="remove_image" value="1" @if($currentType !== 'product') disabled @endif>
                         <label for="remove_image" class="form-check-label">Remove current image</label>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="admin-card mb-4" data-service-proposal-field @if($currentType !== 'service') hidden @endif>
-            <div class="admin-card-header"><div><h2>Service Proposal (PDF)</h2><p>Proposal ini ditampilkan saat pengunjung mengeklik kartu layanan. PDF maksimal 10 MB.</p></div></div>
-            @if($service->hasProposal())
-                <a href="{{ route('admin.services.proposal', $service) }}" class="btn btn-outline-secondary mb-3" target="_blank" rel="noopener"><i class="bi bi-file-earmark-pdf me-1"></i>View Current Proposal</a>
-            @endif
-            <label for="proposal" class="form-label">Upload Proposal</label>
-            <input id="proposal" type="file" name="proposal" accept="application/pdf,.pdf" class="form-control">
-            <x-admin.field-error name="proposal" />
-            <div class="form-check mt-3">
-                <input id="remove_proposal" type="checkbox" class="form-check-input" name="remove_proposal" value="1" @checked(old('remove_proposal'))>
-                <label for="remove_proposal" class="form-check-label">Remove current proposal</label>
+        <div class="admin-card mb-4" data-service-field @if($currentType !== 'service') hidden @endif>
+            <div class="admin-card-header">
+                <div>
+                    <h2>Service Proposal (PDF)</h2>
+                    <p>File PDF ini otomatis tampil di modal dan dapat diunduh langsung oleh pengunjung saat mengeklik kartu <strong>Solar Services</strong> di halaman depan Product &amp; Service.</p>
+                </div>
+                <span class="admin-section-icon"><i class="bi bi-file-earmark-pdf"></i></span>
             </div>
+
+            @if($service->hasProposal())
+                <div class="alert alert-success d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill fs-5"></i>
+                        <div>
+                            <strong>Dokumen proposal aktif terpasang.</strong>
+                            <div class="small text-muted">Pengunjung frontend dapat melihat pratinjau dan mengunduh file ini langsung dari modal kartu layanan.</div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('admin.services.proposal', $service) }}" class="btn btn-sm btn-outline-dark" target="_blank" rel="noopener">
+                            <i class="bi bi-file-earmark-pdf me-1"></i>View Current Proposal
+                        </a>
+                        <a href="{{ route('admin.services.proposal', $service) }}?download=1" class="btn btn-sm btn-dark">
+                            <i class="bi bi-download me-1"></i>Download PDF
+                        </a>
+                    </div>
+                </div>
+            @else
+                <div class="alert alert-warning d-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                    <div>
+                        <strong>Belum ada dokumen proposal PDF.</strong>
+                        <div class="small">Unggah dokumen proposal PDF di bawah agar pengunjung dapat membaca dan mengunduh file penawaran layanan ini.</div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="mb-3">
+                <label for="proposal" class="form-label fw-semibold">Unggah File Proposal (PDF)</label>
+                <input id="proposal" type="file" name="proposal" accept="application/pdf,.pdf" class="form-control" @if($currentType !== 'service') disabled @endif>
+                <div class="form-text">Format dokumen wajib PDF, ukuran maksimal 10 MB.</div>
+                <x-admin.field-error name="proposal" />
+            </div>
+
+            @if($service->hasProposal())
+                <div class="form-check mt-3">
+                    <input id="remove_proposal" type="checkbox" class="form-check-input" name="remove_proposal" value="1" @checked(old('remove_proposal')) @if($currentType !== 'service') disabled @endif>
+                    <label for="remove_proposal" class="form-check-label text-danger">Hapus proposal saat ini</label>
+                </div>
+            @endif
         </div>
 
         <div class="admin-save-bar">

@@ -26,6 +26,14 @@ class StoreServiceRequest extends FormRequest
             'is_featured' => $this->boolean('is_featured'),
             'is_active' => $this->boolean('is_active'),
         ]);
+
+        if ($this->input('item_type') === ServiceType::Service->value) {
+            $this->merge([
+                'brand' => null,
+                'product_category' => null,
+                'price' => null,
+            ]);
+        }
     }
 
     public function rules(): array

@@ -382,15 +382,16 @@ def build_documentation(output_path):
     # 2.3 PRODUCT & SERVICE
     add_h2("2.3 Halaman Produk & Layanan (Product & Service - /product-services)")
     add_p(
-        "Halaman ini dirancang berstruktur rapi dengan membagi lini bisnis ke dalam 2 pilar utama melalui kartu navigasi cerdas di halaman depan Product & Service:"
+        "Halaman ini langsung diakses ketika pengunjung mengeklik menu 'Product & Service' pada navigasi utama. "
+        "Di halaman ini ditampilkan 2 kartu pilihan solusi utama:"
     )
     add_bullet(
-        "Katalog Produk Surya (/product-services/products): Menampilkan seluruh lini produk fisik (misalnya solar inverter merk Huawei, modul panel, dan aksesoris kelistrikan).",
-        "Pilar 1 - Solar Products: "
+        "Kartu Solar Component (Products): Saat diklik, pengunjung diarahkan ke halaman katalog lengkap (/product-services/products) yang dilengkapi fitur pencarian, filter kategori produk, halaman detail produk, dan tombol 'Contact Sales'.",
+        "1. "
     )
     add_bullet(
-        "Layanan Rekayasa & Engineering (/product-services/services): Menampilkan layanan menyeluruh dari hulu ke hilir (studi kelayakan, engineering, procurement, konstruksi, perizinan, hingga maintenance berkala).",
-        "Pilar 2 - Solar Services: "
+        "Kartu Solar Services (Layanan Langsung Modal PDF): Pengunjung TIDAK dialihkan ke halaman detail lagi. Saat kartu 'Solar Services' diklik di mana saja, aplikasi langsung memunculkan Modal Pratinjau PDF di layar. Pengunjung dapat membaca proposal secara langsung di browser dan menekan tombol 'Download PDF' untuk menyimpannya ke perangkat mereka.",
+        "2. "
     )
     add_p(
         "Fitur-Fitur Spesifik pada Menu Produk & Layanan:"
@@ -408,8 +409,8 @@ def build_documentation(output_path):
         "Formulir 'Contact Sales' (/product-services/{slug}/contact-sales): "
     )
     add_bullet(
-        "Setiap kartu layanan dilengkapi ikon visual dan deskripsi mendalam. Apabila Anda telah mengunggah proposal pada admin, muncul tombol resmi 'View Proposal' yang membuka file PDF proposal teknis di tab baru bagi pengunjung.",
-        "Akses Proposal Layanan (PDF Proposal): "
+        "Setiap kartu layanan dilengkapi ikon visual, deskripsi ringkas, dan label 'Lihat & Download Proposal'. Saat kartu diklik di mana saja, sistem langsung memunculkan Modal Pratinjau PDF interaktif. Di dalam modal ini, pengunjung dapat membaca dokumen secara langsung serta menekan tombol 'Download PDF' untuk mengunduh file penawaran layanan.",
+        "Kartu Layanan Interaktif & Modal PDF Proposal: "
     )
 
     # 2.4 PROJECTS
@@ -544,10 +545,12 @@ def build_documentation(output_path):
     add_bullet("Active & Featured Switch: Aktifkan saklar 'Active on frontend' agar tampil, dan 'Featured' jika ingin diprioritaskan.", "8. ")
 
     add_h3("B. Jika Memilih Type: Service (Layanan Rekayasa)")
-    add_bullet("Name: Masukkan judul layanan (contoh: 'Engineering, Procurement & Construction (EPC)').", "1. ")
-    add_bullet("Icon Class: Masukkan kelas icon Bootstrap (contoh: 'bi-tools', 'bi-shield-check', 'bi-lightning-charge').", "2. ")
-    add_bullet("Deskripsi: Tuliskan ruang lingkup pekerjaan layanan rekayasa yang ditawarkan.", "3. ")
-    add_bullet("Upload Proposal (PDF): Anda dapat mengunggah file dokumen proposal resmi perusahaan (format PDF, maksimal 10 MB). Ketika file ini diunggah, pengunjung di website publik dapat mengeklik tombol proposal untuk meninjau atau mengunduh dokumen penawaran layanan tersebut.", "4. ")
+    add_bullet("Formulir Cerdas: Ketika memilih Type 'Service', sistem admin otomatis menyembunyikan kolom khusus produk (Brand, Kategori, Harga, dan Foto Produk) agar proses input ringkas dan bebas kesalahan.", "1. ")
+    add_bullet("Name: Masukkan judul layanan (contoh: 'Engineering, Procurement & Construction (EPC)').", "2. ")
+    add_bullet("Icon Class: Masukkan kelas icon Bootstrap (contoh: 'bi-tools', 'bi-shield-check', 'bi-lightning-charge').", "3. ")
+    add_bullet("Deskripsi: Tuliskan ruang lingkup pekerjaan layanan rekayasa yang ditawarkan.", "4. ")
+    add_bullet("Unggah Proposal (PDF): Unggah file dokumen proposal penawaran resmi (format PDF, maksimal 10 MB). File ini otomatis tampil di modal dan dapat diunduh oleh pengunjung saat kartu layanan diklik di frontend. Tersedia tombol 'Lihat PDF' dan 'Download PDF' di admin untuk menguji file.", "5. ")
+    add_bullet("Indikator di Tabel Menu: Pada tabel daftar menu admin, kolom Price otomatis berubah menjadi status dokumen: badge hijau 'PDF Ready' jika file ada, atau badge abu-abu 'No PDF' jika belum diunggah.", "6. ")
 
     # 3.5 PROJECTS
     add_h2("3.5 Mengelola Portofolio Proyek (Menu: Projects)")

@@ -16,6 +16,13 @@ class ProductServiceController extends PublicController
         $heroSection = $this->content->sectionData($this->content->section($sections, 'hero'));
         $solutionsSection = $this->content->sectionData($this->content->section($sections, 'solutions'));
 
+        $serviceWithProposal = Service::query()->services()->active()->whereNotNull('proposal_path')->first()
+            ?? Service::query()->services()->active()->first();
+
+        $serviceProposalUrl = $serviceWithProposal && $serviceWithProposal->hasProposal()
+            ? route('products.proposal', $serviceWithProposal->slug)
+            : null;
+
         return $this->renderPage('public.products.index', $page, [
             'hero' => [
                 'title' => $heroSection['title'] ?: $page->title,
@@ -24,6 +31,8 @@ class ProductServiceController extends PublicController
                 'image_alt' => $heroSection['image_alt'] ?: 'Solar panels under a cloudy sky',
             ],
             'solutionsSection' => $solutionsSection,
+            'serviceProposalUrl' => $serviceProposalUrl,
+            'serviceWithProposal' => $serviceWithProposal,
         ], [
             'image' => $this->content->assetUrl($heroSection['image'], 'images/pages/product-hero.webp'),
             'canonical' => route('products.index'),
@@ -110,10 +119,15 @@ class ProductServiceController extends PublicController
         $service = Service::query()->services()->active()->where('slug', $slug)->firstOrFail();
         abort_unless($service->hasProposal(), 404);
 
-        return \Illuminate\Support\Facades\Storage::disk('local')->response($service->proposal_path, $service->slug.'.pdf', [
-            'Content-Type' => 'application/pdf', 'X-Content-Type-Options' => 'nosniff',
+        $download = request()->boolean('download');
+        $disposition = $download ? 'attachment' : 'inline';
+        $filename = $download ? \Illuminate\Support\Str::slug($service->name).'-proposal.pdf' : $service->slug.'.pdf';
+
+        return \Illuminate\Support\Facades\Storage::disk('local')->response($service->proposal_path, $filename, [
+            'Content-Type' => 'application/pdf',
+            'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, no-store',
-        ], 'inline');
+        ], $disposition);
     }
 
 }

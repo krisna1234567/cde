@@ -32,10 +32,15 @@ class ServiceProposalTest extends TestCase
         $this->get(route('admin.services.proposal', $service))->assertOk()->assertHeader('Content-Type', 'application/pdf');
         $this->get(route('products.services'))->assertOk()->assertSee('serviceProposalModal', false)
             ->assertSee(route('products.proposal', $service->slug), false)->assertSee('View proposal for Proposal Service');
+        $this->get(route('products.index'))->assertOk()->assertSee('serviceProposalModal', false)
+            ->assertSee(route('products.proposal', $service->slug), false);
         $this->get(route('products.proposal', $service->slug))->assertOk()
             ->assertHeader('Content-Type', 'application/pdf')->assertHeader('X-Content-Type-Options', 'nosniff')
             ->assertHeader('Content-Disposition', 'inline; filename=proposal-service.pdf')
             ->assertStreamedContent("%PDF-1.4\nTest proposal\n%%EOF");
+        $this->get(route('products.proposal', ['slug' => $service->slug, 'download' => 1]))->assertOk()
+            ->assertHeader('Content-Type', 'application/pdf')
+            ->assertHeader('Content-Disposition', 'attachment; filename=proposal-service-proposal.pdf');
     }
 
     public function test_admin_can_replace_preserve_and_remove_proposal(): void

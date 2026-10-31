@@ -120,15 +120,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const viewer = proposalModal.querySelector('[data-proposal-viewer]');
         const empty = proposalModal.querySelector('[data-proposal-empty]');
         const openLink = proposalModal.querySelector('[data-proposal-open]');
+        const downloadLinks = proposalModal.querySelectorAll('[data-proposal-download], [data-proposal-download-footer]');
+
         proposalModal.addEventListener('show.bs.modal', (event) => {
             const trigger = event.relatedTarget;
             const title = trigger?.dataset.serviceTitle || 'Service';
             const url = trigger?.dataset.proposalUrl || '';
-            proposalModal.querySelector('.modal-title').textContent = `${title} — Proposal`;
+            const downloadUrl = url ? `${url}${url.includes('?') ? '&' : '?'}download=1` : '#';
+            const safeFileName = `${title.replace(/[^a-zA-Z0-9\-_ ]/g, '').trim()} - Proposal.pdf`;
+
+            const modalTitleEl = proposalModal.querySelector('#serviceProposalTitle') || proposalModal.querySelector('.modal-title');
+            if (modalTitleEl) {
+                modalTitleEl.textContent = `${title} — Proposal`;
+            }
+
             viewer.replaceChildren();
             empty.hidden = Boolean(url);
-            openLink.hidden = !url;
-            openLink.href = url || '#';
+
+            if (openLink) {
+                openLink.hidden = !url;
+                openLink.href = url || '#';
+            }
+
+            downloadLinks.forEach((link) => {
+                link.hidden = !url;
+                link.href = downloadUrl;
+                if (url) {
+                    link.setAttribute('download', safeFileName);
+                } else {
+                    link.removeAttribute('download');
+                }
+            });
+
             if (url) {
                 const frame = document.createElement('iframe');
                 frame.title = `Proposal for ${title}`;
@@ -137,32 +160,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 viewer.appendChild(frame);
             }
         });
+
         proposalModal.addEventListener('hidden.bs.modal', () => {
             viewer.replaceChildren();
-            openLink.removeAttribute('href');
-            openLink.hidden = true;
+            if (openLink) {
+                openLink.removeAttribute('href');
+                openLink.hidden = true;
+            }
+            downloadLinks.forEach((link) => {
+                link.removeAttribute('href');
+                link.removeAttribute('download');
+                link.hidden = true;
+            });
         });
     }
+
     const itemType = document.querySelector('[data-item-type]');
-    const proposalField = document.querySelector('[data-service-proposal-field]');
-    if (itemType && proposalField) {
-        const updateProposalField = () => {
-            const isService = itemType.value === 'service';
-            proposalField.hidden = !isService;
-            proposalField.querySelectorAll('input').forEach((input) => { input.disabled = !isService; });
-        };
-        itemType.addEventListener('change', updateProposalField);
-        updateProposalField();
-    }
-    const categoryField = document.querySelector('[data-product-category-field]');
-    if (itemType && categoryField) {
-        const updateCategoryField = () => {
+    if (itemType) {
+        const productFields = document.querySelectorAll('[data-product-field]');
+        const serviceFields = document.querySelectorAll('[data-service-field], [data-service-proposal-field]');
+        const categorySelect = document.querySelector('#product_category');
+
+        const updateTypeFields = () => {
             const isProduct = itemType.value === 'product';
-            categoryField.hidden = !isProduct;
-            categoryField.querySelector('select').required = isProduct;
+            const isService = itemType.value === 'service';
+
+            productFields.forEach((field) => {
+                field.hidden = !isProduct;
+                field.querySelectorAll('input, select, textarea').forEach((input) => {
+                    input.disabled = !isProduct;
+                });
+            });
+
+            serviceFields.forEach((field) => {
+                field.hidden = !isService;
+                field.querySelectorAll('input, select, textarea').forEach((input) => {
+                    input.disabled = !isService;
+                });
+            });
+
+            if (categorySelect) {
+                categorySelect.required = isProduct;
+            }
         };
-        itemType.addEventListener('change', updateCategoryField);
-        updateCategoryField();
+
+        itemType.addEventListener('change', updateTypeFields);
+        updateTypeFields();
     }
     initPublicNavbar();
     initSolarCalculator();

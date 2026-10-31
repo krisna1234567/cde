@@ -197,10 +197,14 @@ class ServiceController extends Controller
     {
         abort_unless($service->item_type === ServiceType::Service && $service->hasProposal(), 404);
 
-        return Storage::disk('local')->response($service->proposal_path, $service->slug.'.pdf', [
+        $download = request()->boolean('download');
+        $disposition = $download ? 'attachment' : 'inline';
+        $filename = $download ? Str::slug($service->name).'-proposal.pdf' : $service->slug.'.pdf';
+
+        return Storage::disk('local')->response($service->proposal_path, $filename, [
             'Content-Type' => 'application/pdf', 'X-Content-Type-Options' => 'nosniff',
             'Cache-Control' => 'private, no-store',
-        ], 'inline');
+        ], $disposition);
     }
 
     private function syncAutomaticSeo(Service $service): void

@@ -20,6 +20,15 @@
     </div>
 
     <div class="admin-card">
+        <div class="alert alert-info d-flex align-items-center gap-3 mb-4">
+            <i class="bi bi-info-circle-fill fs-4 text-primary"></i>
+            <div>
+                <strong>Alur Konten Product &amp; Service:</strong>
+                <div>Item bertipe <strong>Product</strong> akan tampil pada katalog produk (<code>/product-services/products</code>).</div>
+                <div>Item bertipe <strong>Service</strong> mengelola dokumen <strong>Proposal PDF</strong> yang langsung dimunculkan dalam modal pratinjau &amp; download saat pengunjung mengeklik kartu <strong>Solar Services</strong> di halaman depan Product &amp; Service.</div>
+            </div>
+        </div>
+
         <div class="admin-card-header">
             <div>
                 <h2>Product & Service Items</h2>
@@ -59,7 +68,7 @@
                         <th>Item</th>
                         <th>Type</th>
                         <th>Brand / Icon</th>
-                        <th>Price</th>
+                        <th>Price / Proposal</th>
                         <th>Order</th>
                         <th>Status</th>
                         <th class="text-end">Action</th>
@@ -75,19 +84,35 @@
                                 <small class="d-block text-muted">{{ $service->product_category ?: 'Other' }}</small>
                             @endif
                         </td>
-                        <td><span class="badge text-bg-light">{{ ucfirst($service->item_type->value) }}</span></td>
+                        <td>
+                            <span class="badge {{ $service->item_type === App\Enums\ServiceType::Product ? 'text-bg-light border' : 'text-bg-primary' }}">
+                                {{ ucfirst($service->item_type->value) }}
+                            </span>
+                        </td>
                         <td>
                             @if ($service->item_type === App\Enums\ServiceType::Product)
                                 {{ $service->brand ?: '-' }}
                             @else
-                                <i class="bi {{ $service->icon ?: 'bi-check-circle' }} me-1"></i>{{ $service->icon ?: 'bi-check-circle' }}
+                                <i class="bi {{ $service->icon ?: 'bi-tools' }} me-1"></i>{{ $service->icon ?: 'bi-tools' }}
                             @endif
                         </td>
                         <td>
-                            @if ($service->price !== null)
-                                {{ $service->currency }} {{ number_format((float) $service->price, 2) }}
+                            @if ($service->item_type === App\Enums\ServiceType::Product)
+                                @if ($service->price !== null)
+                                    {{ $service->currency }} {{ number_format((float) $service->price, 2) }}
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
                             @else
-                                -
+                                @if ($service->hasProposal())
+                                    <a href="{{ route('admin.services.proposal', $service) }}" target="_blank" rel="noopener" class="badge text-bg-success text-decoration-none" title="Lihat dokumen proposal PDF">
+                                        <i class="bi bi-file-earmark-pdf me-1"></i>PDF Ready
+                                    </a>
+                                @else
+                                    <span class="badge text-bg-secondary" title="Belum ada dokumen proposal PDF yang diunggah">
+                                        <i class="bi bi-file-earmark-x me-1"></i>No PDF
+                                    </span>
+                                @endif
                             @endif
                         </td>
                         <td>#{{ $service->sort_order }}</td>
@@ -97,8 +122,17 @@
                         </td>
                         <td class="text-end">
                             <div class="admin-row-actions justify-content-end">
-                                @if ($service->item_type === App\Enums\ServiceType::Product && $service->is_active)
-                                    <a href="{{ route('products.show', $service->slug) }}" target="_blank" rel="noopener" class="btn btn-sm btn-light" title="Preview"><i class="bi bi-box-arrow-up-right"></i></a>
+                                @if ($service->item_type === App\Enums\ServiceType::Product)
+                                    @if ($service->is_active)
+                                        <a href="{{ route('products.show', $service->slug) }}" target="_blank" rel="noopener" class="btn btn-sm btn-light" title="Preview Product"><i class="bi bi-box-arrow-up-right"></i></a>
+                                    @endif
+                                @else
+                                    @if ($service->hasProposal())
+                                        <a href="{{ route('admin.services.proposal', $service) }}" target="_blank" rel="noopener" class="btn btn-sm btn-light" title="Buka PDF Proposal"><i class="bi bi-file-earmark-pdf"></i></a>
+                                    @endif
+                                    @if ($service->is_active)
+                                        <a href="{{ route('products.services') }}" target="_blank" rel="noopener" class="btn btn-sm btn-light" title="Preview Halaman Services"><i class="bi bi-box-arrow-up-right"></i></a>
+                                    @endif
                                 @endif
                                 <a href="{{ route('admin.services.edit', $service) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square me-1"></i>Edit</a>
                                 <form method="POST" action="{{ route('admin.services.destroy', $service) }}" data-confirm-delete="item ini">
